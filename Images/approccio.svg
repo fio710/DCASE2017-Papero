@@ -5,11 +5,35 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    id="svg2"
    viewBox="0 0 2101.318 1970.5738"
    height="556.13971mm"
-   width="593.03864mm">
+   width="593.03864mm"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="approccio.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1535"
+     inkscape:window-height="876"
+     id="namedview540"
+     showgrid="false"
+     inkscape:zoom="0.67747659"
+     inkscape:cx="1214.6477"
+     inkscape:cy="1601.1984"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
   <defs
      id="defs4">
     <marker
@@ -177,7 +201,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -486,7 +510,7 @@
            height="147.46437"
            width="1044.2021"
            id="rect4635" /></flowRegion><flowPara
-         id="flowPara4637"></flowPara></flowRoot>    <path
+         id="flowPara4637" /></flowRoot>    <path
        d="m -462.35067,-442.92915 960.85067,0 m -960.85067,-95.1728 960.85067,0 m -960.85059,-95.1728 960.85059,0 m -960.85059,-95.1719 960.85059,0 m -960.85065,-95.1728 960.85065,0 m -960.85073,-94.9483 960.85073,0 m -99.38262,498.2811 -0.12176,-0.7308 0,-520.3761 m -116.75325,521.1072 -0.12177,-0.7308 0,-520.3761 m -116.75321,521.1073 -0.12178,-0.7309 0,-520.3761 m -116.753216,521.1072 -0.12178,-0.7308 0,-520.3761 m -116.75321,521.1072 -0.12178,-0.7308 0,-520.376 m -116.753204,521.1072 -0.12178,-0.7309 0,-520.3761 m -116.75322,521.1072 -0.12177,-0.7307 0,-520.3762 m -116.75322,521.1073 -0.12178,-0.7309 0,-520.376"
        style="fill:none;fill-rule:evenodd;stroke:#797879;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="path4232-7-6-2-2" />
@@ -760,7 +784,7 @@
            height="87"
            width="337"
            id="rect4924" /></flowRegion><flowPara
-         id="flowPara4926"></flowPara></flowRoot>    <path
+         id="flowPara4926" /></flowRoot>    <path
        d="m -462.35057,187.29482 960.85058,0 m -960.85058,-95.1728 960.85058,0 m -960.85058,-95.172809 960.85058,0 m -960.85058,-95.171914 960.85058,0 m -960.85058,-95.172807 960.85058,0 m -960.85068,-94.94828 960.85068,0 m -99.38262,498.28111 -0.12176,-0.73082 0,-520.3761 m -116.7532,521.10723 -0.1218,-0.73082 0,-520.3761 m -116.7532,521.10722 -0.1218,-0.73082 0,-520.3761 m -116.753202,521.10723 -0.1218,-0.73082 0,-520.3761 m -116.7532,521.10722 -0.1218,-0.73082 0,-520.3761 m -116.753198,521.10723 -0.1218,-0.73082 0,-520.3761 m -116.7532,521.10722 -0.1217,-0.73082 0,-520.3761 m -116.7533,521.10723 -0.1218,-0.73082 0,-520.3761"
        style="fill:none;fill-rule:evenodd;stroke:#797879;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="path4232-7-6-2-4" />
@@ -997,7 +1021,7 @@
            height="134"
            width="1096"
            id="rect5182" /></flowRegion><flowPara
-         id="flowPara5184"></flowPara></flowRoot>    <flowRoot
+         id="flowPara5184" /></flowRoot>    <flowRoot
        transform="matrix(0.89727814,0,0,0.89741642,-611.6069,-431.4608)"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:44.57582855px;line-height:125%;font-family:'Abyssinica SIL';-inkscape-font-specification:'Abyssinica SIL, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="flowRoot4939-7-3"
@@ -1020,7 +1044,7 @@
            height="67.260849"
            width="176.42314"
            id="rect5261" /></flowRegion><flowPara
-         id="flowPara5263"></flowPara></flowRoot>    <flowRoot
+         id="flowPara5263" /></flowRoot>    <flowRoot
        transform="matrix(0.89727815,0,0,0.89741642,226.92207,194.7541)"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:35px;line-height:125%;font-family:'Abyssinica SIL';-inkscape-font-specification:'Abyssinica SIL, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="flowRoot4939-8-3"
@@ -1054,7 +1078,7 @@
            height="232"
            width="812"
            id="rect5364" /></flowRegion><flowPara
-         id="flowPara5366"></flowPara></flowRoot>    <flowRoot
+         id="flowPara5366" /></flowRoot>    <flowRoot
        transform="translate(338.06346,-417.68127)"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'Abyssinica SIL';-inkscape-font-specification:'Abyssinica SIL, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="flowRoot5368"
@@ -1079,7 +1103,7 @@
            height="319.61227"
            width="622.25397"
            id="rect5386" /></flowRegion><flowPara
-         id="flowPara5388"></flowPara></flowRoot>    <rect
+         id="flowPara5388" /></flowRoot>    <rect
        y="-815.69299"
        x="961.15179"
        height="207.50604"
@@ -1113,7 +1137,7 @@
            height="632"
            width="976"
            id="rect5372-1" /></flowRegion><flowPara
-         id="flowPara5378-6">MFCCs</flowPara><flowPara
+         id="flowPara5378-6">Feature</flowPara><flowPara
          id="flowPara5495">Extraction</flowPara><flowPara
          id="flowPara5380-0" /></flowRoot>    <rect
        y="-484.18692"
@@ -1146,7 +1170,7 @@
            height="395.9798"
            width="692.96466"
            id="rect5538" /></flowRegion><flowPara
-         id="flowPara5540"></flowPara></flowRoot>    <flowRoot
+         id="flowPara5540" /></flowRoot>    <flowRoot
        transform="translate(43.400879,489.22549)"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'Abyssinica SIL';-inkscape-font-specification:'Abyssinica SIL, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="flowRoot5368-5-7-2"
@@ -1254,7 +1278,7 @@
            height="40"
            width="366"
            id="rect6015" /></flowRegion><flowPara
-         id="flowPara6017"></flowPara></flowRoot>    <rect
+         id="flowPara6017" /></flowRoot>    <rect
        y="525.3183"
        x="816.29504"
        height="63.068966"
