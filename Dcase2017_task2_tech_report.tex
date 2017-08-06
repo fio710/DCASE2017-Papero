@@ -16,7 +16,7 @@
 
 % Title.
 % --------------------
-\title{A HIERARCHIC MULTI-SCALED APPROACH FOR SOUND EVENT DETECTION}
+\title{A HIERARCHIC MULTI-SCALED APPROACH FOR RARE SOUND EVENT DETECTION}
 
 % Single addresses (uncomment and modify for single-address case).
 % --------------------
@@ -70,12 +70,12 @@
 
 \begin{abstract}
 We propose a system for rare sound event detection using hierarchical and multi-scaled approach based on Multi Layer Perceptron (MLP) and Convolutional Neural Networks(CNN). 
-It is our contribution to the rare sound event detection task of the IEEE AASP Challenge on  Detection and Classification of Acoustic Scenes and Events (DCASE2017). The task consists on detection of event onset from artificially generated mixtures. Acoustic features are extracted from the acoustic signals, successively first onset detection stage is performed by an MLP architecture which proposes contiguous blocks of frames to the second stage. The CNN refines the event detection of the prior network, intrinsically operating on a multi-scaled resolution and discarding blocks that contain background wrongly classified by the MLP as event. Finally the effective onset time of the active event is obtained.
+It is our contribution to the rare sound event detection task of the IEEE AASP Challenge on  Detection and Classification of Acoustic Scenes and Events (DCASE2017). The task consists on detection of event onset from artificially generated mixtures. Acoustic features are extracted from the acoustic signals, successively first event detection stage is performed by an MLP architecture which proposes contiguous blocks of frames to the second stage. The CNN refines the event detection of the prior network, intrinsically operating on a multi-scaled resolution and discarding blocks that contain background wrongly classified by the MLP as event. Finally the effective onset time of the active event is obtained.
 The achieved overall error rate and F-measure on the development testset are respectively equal to 0.18 and 90.9\%.
 \end{abstract}
 
 \begin{keywords}
-DCASE2017, Sound event detection, MLP, CNN, logmel
+DCASE2017, Rare sound event detection, MLP, CNN, \textit{LogMel}
 \end{keywords}
 
 
@@ -98,8 +98,8 @@ Task 2 of DCASE challange 2017 \cite{dcase2017web} consists in determining the p
 
 \section{Proposed Method}
 \label{sec:pagelimit}
-algo composto da 4 stadi principali: eat extr - event detection - multiscaled detection refinement - event onset annotation 
-The proposed system is a hierarchical algorithm composed of qs main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output and a refinement of the previous decision stage performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset frame of the active event is obtained.
+%algo composto da 4 stadi principali: eat extr - event detection - multiscaled detection refinement - event onset annotation 
+The proposed system is a hierarchical algorithm composed of four main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output and a refinement of the previous decision stage performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset frame of the active event is obtained.
 
 \subsection{Feature Extraction}
 The feature extraction stage operates on mono audio signals sampled at 44.1 kHz. For our purpose, we exploit \textit{LogMel} as feature set, following results obtained for the baseline system of the DCASE2017 challenge \cite{DCASE2017challenge}. \textit{LogMel} coefficients are obtained by filtering the magnitude spectrum with a filter-bank composed of 40 filters evenly spaced in the mel frequency scale and then computing the logarithm of the energy of each band. The used frame size is equal to 40 ms and the frame step is equal to 20 ms. 
@@ -119,16 +119,22 @@ lavora su base chunk 20 frame: organizzazione input (chunk da 20 non overlappati
 descrizione di come lavorano i kernel per efatizzare la multiresolution approach
 cleassificazione chunk ovellappati (chunk size -1 )
 \subsubsection{Post Processig }
-per ogni seq analizzo tutti gli eventi. Scarto quelli classificati con bck . Prendo il primo evento classificato come non bck perche lo scopo è beccare l onset
-
+per ogni seq analizzo tutti gli eventi. Scarto quelli classificati con bck . Prendo il primo evento classificato come non bck perche lo scopo è beccare l onseth
 \section{Experimental Set-Up}
 \label{sec:pagestyle}
-In the following section .....
-\subsection{Onset Detection Stage}
-random search per la ricerca di parametri di layout della rete NN: validation split del dcase 
-Per goni rete è stata effettuata un gridsearch sui parametri di post processing per l ottimizzazione del ER
-E' stata selezionata la rete che ha ottenuto l' ER più basso
-La rete selezionata è stata trainata nuovamente con aggiungendo al trainset delle sequenze  contenente gunshot per bilanciare i secondi di materiale degli eventi
+According to the DCASE 2017 guidelines, the performance of the proposed algorithm has been assessed firstly by using the development dataset for training and validation of the system. Then, a blind test on the provided evaluation dataset was performed with the model achieving the highest performance. The performance metric of the DCASE 2017 challenge is the event-based error rate calculated using onset-only condition with a collar of 500 ms. Additionally, event-based F-score with a 500 ms onset-only collar was calculated. Detailed information on metrics calculation is available in \cite{Mesaros2016_MDPI}. 
+
+\subsection{MLP Event Detection Stage}
+%random search per la ricerca di parametri di layout della rete NN: validation split del dcase 
+%Per goni rete è stata effettuata un gridsearch sui parametri di post processing per l ottimizzazione del ER
+%E' stata selezionata la rete che ha ottenuto l' ER più basso
+%La rete selezionata è stata trainata nuovamente con aggiungendo al trainset delle sequenze  contenente gunshot per bilanciare i secondi di materiale degli eventi
+The performance of the MLP event detection stage has been assessed by exploring the networks topology with a random search strategy \cite{bergstra2012random}. Table XX shows the parameters explored in the random search, as well as the prior distribution and ranges. The
+number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. For each of these a grid search was performed in order to find the post-processing parameters yelding the minimum error rate. Investigated parameters in the grid search were: exponential window $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table XX.
+
+%TODO: add table with random search parameters and distributions + gridsearch ranges
+Because of the fast decay of "gun shot" sound, we the noticed that the audio segments containing this event were in small number with respect to the other samples. For this reason we trained the event detector MLP obtained from the random seach with an extended dataset, including 500 newly generated mixtures containing the "gun shot" sound event.
+At the end of the validation stage of the system the trained once again the neural network including all the mixtures in the development dataset furnished with the DCASE 2017 challenge package and the aforementioned 500 newly generated containing the "gun shot" sound event for a total of 3487 audio sequences.
 
 \subsection{Multiscaled Refinement Decision Stage}
 Per trainare la cnn abbiamo data in ingresso alla prima rete delle sequenze audio di solo bck. Gli eventi selezionati da questa rete rappresentano il materiale di training
@@ -139,8 +145,9 @@ Abbiamo effetuato una valutazione della cnn subase evento con la fmeasure.
 Finally, sul validati
 
 \subsection{Evaluation Phase}
-Descrizione con img della fase di valutazione
-Scelta th 0.20 invece che 0.25: per favorile meno deletion a discapito delle insertion. La cnn pensa a eliminare le insertion classificandole come bck
+%Descrizione con img della fase di valutazione
+%Scelta th 0.20 invece che 0.25: per favorile meno deletion a discapito delle insertion. La cnn pensa a eliminare le insertion classificandole come bck
+Once the best performing models were found, during the validation stage we performed a fine tuning of the post processing parameters of the event detection MLP in order to assess the performance of the whole system. In fact, the hierarchical architecture of the algorithm permits to set a lower threshold in the first decision stage in order to reduce the deletions to the detriment of some insertions that will be removed by the successive decision stage. The parameters of the best performing system are reported in Table YY.
 \section{Results}
 Error rate su base evento prima rete: 
 Fmeasure cnn:
