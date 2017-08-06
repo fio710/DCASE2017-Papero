@@ -112,9 +112,8 @@ The network is designed to consider a temporal context, thus the current feature
 \end{equation}
 with $c = 1, \dots, C$.
 
-\subsubsection{Post Processig }
-come viene fatto ( conv + media + th) 
-per poi ottenere delle regioni contigue che proponiamo come eventi
+\subsubsection{Post Processig}
+As network output signal we consider the output of the neuron corresponding to the event class. It is convolved with an exponential decay window of length ($w$), then it is processed with a sliding median filter and finally a threshold $\theta$ is applied.
 \subsection{Convolutional Neurl Network}
 lavora su base chunk 20 frame: organizzazione input (chunk da 20 non overlappati) e label 
 descrizione di come lavorano i kernel per efatizzare la multiresolution approach
