@@ -95,11 +95,16 @@ algo composto da 4 stadi principali: eat extr - event detection - multiscaled de
 The proposed system is a hierarchical algorithm composed of qs main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output and a refinement of the previous decision stage performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset frame of the active event is obtained.
 
 \subsection{Feature Extraction}
-descrivere logmel
+The feature extraction stage operates on mono audio signals sampled at 44.1 kHz. For our purpose, we exploit \textit{LogMel} as feature set, following results obtained for the baseline system of the DCASE2017 challenge \cite{DCASE2017challenge}. \textit{LogMel} coefficients are obtained by filtering the magnitude spectrum with a filter-bank composed of 40 filters evenly spaced in the mel frequency scale and then computing the logarithm of the energy of each band. The used frame size is equal to 40 ms and the frame step is equal to 20 ms. 
+The range of feature values is then normalized according to the mean and the standard deviation computed on the training sets of the neural networks.
 \subsection{Multilayer Perceptron Neural Network}
-descriveree a cosa è adibita la prima rete
-descriere come sono organizzati inpute e label per il training
-descrivere cosa è la predictionrow
+The MLP artificial neural network was introduced in 1986 \cite{Rumelhart86-LRB}. The main element is the artificial neuron, consisting in an activation function applied to the sum of the weighted inputs. Neurons are then arranged in layers, with feed forward connections from one layer to the next. The supervised learning of the network makes use of the stochastic gradient descent with error back-propagation algorithm. The output layer is formed by two units with the \textit{softmax} non-linear function, defined as:  $\varphi(x_k) = e^{x_k}/\sum_{j=1}^{2}e^{x_j}$ for $k=1,2$. The outputs of the softmax layer represent the probabilities that a sample belongs to the background or the event class. 
+The network is designed to consider a temporal context, thus the current feature vector $\mathbf{x}[t]$ at the frame index $t$ and a context size equal to $C$ is concatenated with the previous feature vectors obtaining:
+\begin{equation}
+\mathbf{x}[t] =  \{\mathbf{x}[t - c],\ldots,\mathbf{x}[t-1],\mathbf{x}[t]\},
+\end{equation}
+with $c = 1, \dots, C$.
+
 \subsubsection{Post Processig }
 come viene fatto ( conv + media + th) 
 per poi ottenere delle regioni contigue che proponiamo come eventi
