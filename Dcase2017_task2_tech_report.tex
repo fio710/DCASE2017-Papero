@@ -51,13 +51,13 @@
        }
  \secondlinename{	
  	   Emanuele Principi$^{1}$,  
-       Stefano Squartini$^{1}$, 
        Leonardo Gabrielli$^{1}$,
+       Stefano Squartini$^{1}$, 
        Francesco Piazza$^{1}$
        }
        % fixed *.sty to allow names on multiple lines
  \address{$^1$ Politecnic University of Marche, Information Engineering  Dept., Ancona, Italy,\\ \{d.droghini, v.vesperini, d.ferretti\}@pm.univpm.it\\   
- 		\{e.principi, s.squartini, l.gabrielli, f.piazza\}@univpm.it\\       
+ 		\{e.principi, l.gabrielli, s.squartini, f.piazza\}@univpm.it\\       
 }
   
 
@@ -69,11 +69,13 @@
 \begin{sloppy}
 
 \begin{abstract}
-
+We propose a system for rare sound event detection using hierarchical and multi-scaled approach based on Multi Layer Perceptron (MLP) and Convolutional Neural Networks(CNN). 
+It is our contribution to the rare sound event detection task of the IEEE AASP Challenge on  Detection and Classification of Acoustic Scenes and Events (DCASE2017). The task consists on detection of event onset from artificially generated mixtures. Acoustic features are extracted from the acoustic signals, successively first onset detection stage is performed by an MLP architecture which proposes contiguous blocks of frames to the second stage. The CNN refines the event detection of the prior network, intrinsically operating on a multi-scaled resolution and discarding blocks that contain background wrongly classified by the MLP as event. Finally the effective onset time of the active event is obtained.
+The achieved overall error rate and F-measure on the development testset are respectively equal to 0.18 and 90.9\%.
 \end{abstract}
 
 \begin{keywords}
-One, two, three, four, five
+DCASE2017, Sound event detection, MLP, CNN, logmel
 \end{keywords}
 
 
@@ -90,6 +92,8 @@ One, two, three, four, five
 \section{Proposed Method}
 \label{sec:pagelimit}
 algo composto da 4 stadi principali: eat extr - event detection - multiscaled detection refinement - event onset annotation 
+The proposed system is a hierarchical algorithm composed of qs main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output and a refinement of the previous decision stage performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset frame of the active event is obtained.
+
 \subsection{Feature Extraction}
 descrivere logmel
 \subsection{Multilayer Perceptron Neural Network}
