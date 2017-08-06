@@ -114,10 +114,15 @@ with $c = 1, \dots, C$.
 
 \subsubsection{Post Processig}
 As network output signal we consider the output of the neuron corresponding to the event class. It is convolved with an exponential decay window of length ($w$), then it is processed with a sliding median filter and finally a threshold $\theta$ is applied.
-\subsection{Convolutional Neurl Network}
+
+\subsection{Convolutional Neural Network}
 lavora su base chunk 20 frame: organizzazione input (chunk da 20 non overlappati) e label 
 descrizione di come lavorano i kernel per efatizzare la multiresolution approach
 cleassificazione chunk ovellappati (chunk size -1 )
+
+CNN is a feed-forward neural network \cite{Yann-cnn-1998} usually composed of three types of layers: convolutional layers, pooling layers and layers of neurons. The convolutional layer performs the mathematical operation of convolution between a multi-dimensional input and a fixed size kernel. Successively, a non-linearity is applied element-wise. The kernels are generally small compared to the input, allowing CNNs to process large inputs with few learnable parameters. Successively, a pooling layer is usually applied, in order to reduce the feature map dimensions. Finally, at the top of the network, an MLP layer is applied.
+The aims of the CNN is to discriminate the event, selected from the previous network, from the background. The network is trained as a biclass classifier on non-overapped audio chunk of logmel frames with resulting 2D input dimension of 40x20. In the case of audio task, CNN usually exploits the temporal evolution of the signal \cite{thomas2014analyzing} due of is nature. 
+In the classification phase the audio event are evaluated based on chunk 40x20 with an overlapp of 95\% (1 frame shift). This leads to an analisy of the audio event at different time and frequency resolution with respect to previous network. 
 \subsubsection{Post Processig }
 per ogni seq analizzo tutti gli eventi. Scarto quelli classificati con bck . Prendo il primo evento classificato come non bck perche lo scopo è beccare l onseth
 \section{Experimental Set-Up}
