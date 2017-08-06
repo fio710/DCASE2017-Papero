@@ -16,7 +16,7 @@
 
 % Title.
 % --------------------
-\title{AUTHOR GUIDELINES FOR DCASE2017 WORKSHOP MANUSCRIPTS}
+\title{A HIERARCHIC MULTI-SCALED APPROACH FOR SOUND EVENT DETECTION}
 
 % Single addresses (uncomment and modify for single-address case).
 % --------------------
@@ -80,28 +80,62 @@ One, two, three, four, five
 \section{Introduction}
 \label{sec:intro}
 
-
-
-\section{Sound Event Detection}
 \label{sec:format}
+2 aprole su soude evet det
+2 parole su nostri lavori novelty + (fall detection)
+2 parole su dcase daaset + ref a loro
 
 
 
-\section{Convolutional Neural Network}
+\section{Proposed Method}
 \label{sec:pagelimit}
+algo composto da 4 stadi principali: eat extr - event detection - multiscaled detection refinement - event onset annotation 
+\subsection{Feature Extraction}
+descrivere logmel
+\subsection{Multilayer Perceptron Neural Network}
+descriveree a cosa è adibita la prima rete
+descriere come sono organizzati inpute e label per il training
+descrivere cosa è la predictionrow
+\subsubsection{Post Processig }
+come viene fatto ( conv + media + th) 
+per poi ottenere delle regioni contigue che proponiamo come eventi
+\subsection{Convolutional Neurl Network}
+lavora su base chunk 20 frame: organizzazione input (chunk da 20 non overlappati) e label 
+descrizione di come lavorano i kernel per efatizzare la multiresolution approach
+cleassificazione chunk ovellappati (chunk size -1 )
+\subsubsection{Post Processig }
+per ogni seq analizzo tutti gli eventi. Scarto quelli classificati con bck . Prendo il primo evento classificato come non bck perche lo scopo è beccare l onset
 
-
-
-\section{Multiscale resolution Approach}
+\section{Experimental Set-Up}
 \label{sec:pagestyle}
+In the following section .....
+\subsection{Onset Detection Stage}
+random search per la ricerca di parametri di layout della rete NN: validation split del dcase 
+Per goni rete è stata effettuata un gridsearch sui parametri di post processing per l ottimizzazione del ER
+E' stata selezionata la rete che ha ottenuto l' ER più basso
+La rete selezionata è stata trainata nuovamente con aggiungendo al trainset delle sequenze  contenente gunshot per bilanciare i secondi di materiale degli eventi
 
-\subsection{First Stage}
-\subsection{Second Stage}
+\subsection{Multiscaled Refinement Decision Stage}
+Per trainare la cnn abbiamo data in ingresso alla prima rete delle sequenze audio di solo bck. Gli eventi selezionati da questa rete rappresentano il materiale di training
+della classe bck per la cnn. Per le altre classi di eventi abbbiamo preso le porzioni di soli eventi mixed to bck relativi alle mixture fornite dal dcase e gli isolated events.
+
+Abbiamo generato una stratified validation split del dataset appena descritto. 
+Abbiamo effetuato una valutazione della cnn subase evento con la fmeasure.
+Finally, sul validati
+
+\subsection{Evaluation Phase}
+Descrizione con img della fase di valutazione
+Scelta th 0.20 invece che 0.25: per favorile meno deletion a discapito delle insertion. La cnn pensa a eliminare le insertion classificandole come bck
 \section{Results}
+Error rate su base evento prima rete: 
+Fmeasure cnn:
+
+Risultato finale 0.18 più report per classi ( evetuale discussio sui babycry che nn vengono classificati bene )
 \label{sec:typestyle}
 
 \subsection{Real Scenario application}
-
+Descrizione scenario reale: trainig cnn su 4 classi
+risultato finale 0.23
 
 \section{Conclusion}
 \label{sec:majhead}
