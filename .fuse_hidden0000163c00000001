@@ -7,8 +7,7 @@
 
 \documentclass{article}
 \usepackage{dcase2017,amsmath,graphicx,url,times,booktabs, tabularx}
-\usepackage{color}
-\usepackage{multicol}        % used for the two-column index
+
 % Example definitions.
 % --------------------
 \def\defeqn{\stackrel{\triangle}{=}}
@@ -153,16 +152,16 @@ The performance of the first event detection stage has been assessed by explorin
     Parameter     & Range & Distribution\\  
     \hline
     \hline                                     
-    MLP layers Nr.  & [2 - 7]& uniform \\
+    MLP layers Nr.  & [1-3]& uniform \\
     \hline                                     
-    MLP layers dim. & [20 - 4048]& log-unifom \\
-    \hline                                     
-    MLP Context & [3 - 7] & uniform\\
-    \hline
-    Activation & [tanh - relu] & uniform\\
-    \hline
     Dropout & [Yes-No] & uniform\\
     \hline
+    MLP layers dim. & [128-4096]& log-unifom \\
+    \hline                                     
+    MLP Context & [3-7] & uniform\\
+  
+    \hline
+
   \end{tabular}
 
 \end{table}
@@ -207,12 +206,12 @@ The performance of the first event detection stage has been assessed by explorin
 
 %   \end{tabular}
 % \end{table}
-Table \ref{tbl:hyper-params-mlp} shows the parameters explored in the random search, as well as the prior distribution and ranges. The
-number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. The neural networks were trained on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$. The maximum number of epochs was set to 300. A successive grid search was performed for each network configuration evaluated in the random seach, in order to find the post-processing parameters that yielded the minimum error rate. Investigated parameters in the grid search were: exponential window lenght $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table \ref{tbl:post-proc-params-mlp}. The model with resulting minimum error rate was composed as follows: the input layer accepted 120 values for each frame index, corresponding to a context size $C=3$, the hidden layers were two dense layers respectively of size $[631,419]$, to whom the $ReLU$ activation function is applied and finally the output layer made of two neurons with the softmax function.
+Table \ref{tbl:hyper-params-mlps} shows the parameters explored in the random search, as well as the prior distribution and ranges. The
+number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. The neural networks were trained on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$. The maximum number of epochs was set to 300. A successive grid search was performed for each network configuration evaluated in the random seach, in order to find the post-processing parameters that yielded the minimum error rate. Investigated parameters in the grid search were: exponential window $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table \ref{tbl:post-proc-params-mlp}. The model with resulting minimum error rate was composed as follows: the input layer accepted 120 values for each frame index, corresponding to a context size $C=3$, the hidden layers were two dense layers respectively of size $[631,419]$, to whom the $ReLU$ activation function is applied and finally the output layer made of two neurons with the softmax function.
 
 %TODO: add table with random search parameters and distributions + gridsearch ranges
 Because of the fast decay of  sound, we the noticed that the audio segments containing this event were in small number with respect to the other samples. For this reason we trained the MLP-based event detector obtained from the random seach with an extended dataset, including 500 newly generated mixtures containing the ``gun shot'' sound event.
-At the end of the validation stage of the system the neural network were trained including all the mixtures in the development dataset furnished with the DCASE 2017 challenge package and the aforementioned 500 newly generated containing the ``gun shot'' sound event for a total of 3487 audio sequences.
+At the end of the validation stage of the system the trained once again the neural network including all the mixtures in the development dataset furnished with the DCASE 2017 challenge package and the aforementioned 500 newly generated containing the ``gun shot'' sound event for a total of 3487 audio sequences.
 
 \subsection{Multiscaled Refinement Decision Stage}
 %Per trainare la cnn abbiamo data in ingresso alla prima rete delle sequenze audio di solo bck. Gli eventi selezionati da questa rete rappresentano il materiale di training
@@ -230,11 +229,7 @@ To design the best CNN model for our purposes, we generated a shuffle stratified
 \subsection{Evaluation Phase}
 %Descrizione con img della fase di valutazione
 %Scelta th 0.20 invece c he 0.25: per favorile meno deletion a discapito delle insertion. La cnn pensa a eliminare le insertion classificandole come bck
-Once the best performing models were found, during the validation stage we performed a fine tuning of the post processing parameters of the MLP-based event detection in order to assess the performance of the whole system. In fact, the hierarchical architecture of the algorithm permits to set a lower threshold in the first decision stage in order to reduce the deletions to the detriment of some insertions. They are removed by the successive decision stage making use of the multi-scale processing acted by the CNN. 
-%\textcolor{red}{A complete overview of the parameters of the best performing system are reported in Table YY}. 
-It is necessary to notice that in this challenge task the event target class (not its presence or absence) was a prior knowledge, thus in evaluation phase the illustrated procedure is applicable independently to different sequences each potentially containing the respective target event. The final score is then computed overall.
-\textcolor{red}{In table YY are reported the parameters used in each of the four submission that we performed}. 
-
+Once the best performing models were found, during the validation stage we performed a fine tuning of the post processing parameters of the MLP-based event detection in order to assess the performance of the whole system. In fact, the hierarchical architecture of the algorithm permits to set a lower threshold in the first decision stage in order to reduce the deletions to the detriment of some insertions. They are removed by the successive decision stage making use of the multi-scale processing acted by the CNN. A complete overview of the parameters of the best performing system are reported in Table YY. It is necessary to notice that in this challenge task the event target class (not its presence or absence) was a prior knowledge, thus in evaluation phase the illustrated procedure is applicable independently to different sequences each potentially containing the respective target event. The final score is then computed overall.
 \section{Results}
 \label{sec:results}
 %Error rate su base evento prima rete: 
@@ -244,50 +239,7 @@ It is necessary to notice that in this challenge task the event target class (no
 %\label{sec:typestyle}
 %TODO DIEGO controlla score---------------------------------------------------------------------------------------------------------------------------------
 %In this section, the obtained results in terms of event error rate are discussed. 
-The error rate based on the event detection of the first stage is equal to 0.23 %running onset_detection with th=0.25 , wl=70 , k=11 , psh=10: ER=0.23293172690763053 -- IN=0.107095046854083 -- DE=0.12583668005354753
- and its respective F-measure is 88\%. After the CNN-based refinement stage, the final overal error rate and F-measure are respectively equal to 0.18 and 90.9\%. %running onset_detection with th=0.2 , wl=70 , k=11 , psh=30: ER=0.29049531459170014 -- IN=0.19143239625167335 -- DE=0.09906291834002677. La predict shif (psh) di 30 serve per selezionare in maniera più centrata gli eventi per la cnn
- \textcolor{red}{The post processing parameter used to select the MLP network with the lower ER and the value used in the final evaluation phase are reported in table \ref{tbl:post-proc-params}.}
- \begin{table}[t]
-  \caption{Post processing parameter}\label{tbl:post-proc-params}
-  \centering
-  \footnotesize
-  \begin{tabular} {| c | c | c |}
-    \hline
-    Parameter     & MLP Optimal ER &  Evaluation\\  
-    \hline
-    \hline                                     
-    Threshold  & 0.25 & 0.20\\
-    \hline                                     
-    Windows length & 70 & 70\\
-    \hline
-    Median Filter & 11 & 11\\
-    \hline                                       
-  \end{tabular}
-  
-\end{table}
- \begin{table}[t]
-  \caption{Final Scores}\label{tbl:finalScore}
-  \centering
-  \footnotesize
-  \begin{tabular} {| c | c | c | c | c |}
-    \hline
-    & \multicolumn{2}{c|}{Proposed Method}&\multicolumn{2}{c|}{Baseline}\\
-    \hline  
-                & ER    &  F-score  & ER    &  F-score  \\  
-    \hline                                     
-    Baby cry    & 0.22  & 89.0 \%      & 0.67  & 72.0 \%\\
-    \hline                                     
-    Glass break & 0.14  & 92.8 \%        & 0.22  & 88.5 \%\\
-    \hline
-    Gun shot    & 0.18  & 91.0 \%        & 0.69  & 57.4 \%\\
-    \hline
-    \textbf{Avarage} & \textbf{0.18} & \textbf{90.91 \%}& \textbf{0.53} & \textbf{72.7\%}\\
-    \hline
-                                      
-  \end{tabular}
-  
-\end{table}
- With respect to the DCASE 2017 baseline system the improvement in terms of error rate reduction is equal to 0.35.  In Table \ref{tbl:finalScore} are reported the scores for the two stages of the proposed system and the baseline.
+The error rate based on the event detection of the first stage is equal to 0.25 and its respective F-measure is 88\%. After the CNN-based refinement stage, the final overal error rate and F-measure are respectively equal to 0.18 and 90.9\%. With respect to the DCASE 2017 baseline system the improvement in terms of error rate reduction is equal to 0.35.  In table ZZ are reported the scores for the two stages of the proposed system and the baseline.
 
 \subsection{Real Scenario application}
 %Descrizione scenario reale: trainig cnn su 4 classi
