@@ -81,8 +81,6 @@ DCASE2017, Rare sound event detection, MLP, CNN, \textit{LogMel}
 
 \section{Introduction}
 \label{sec:intro}
-
-\label{sec:format}
 %2 aprole su soude evet det
 %2 parole su nostri lavori novelty + (fall detection)
 %2 parole su dcase daaset + ref a loro
@@ -97,7 +95,7 @@ glass jingling).
 Task 2 of DCASE challenge 2017 \cite{dcase2017web} consists in determining the precise onset of three types of sounds: "babycry", "glassbreak" and "gun shot". 
 
 \section{Proposed Method}
-\label{sec:pagelimit}
+\label{sec:proposed-meth}
 %algo composto da 4 stadi principali: eat extr - event detection - multiscaled detection refinement - event onset annotation 
 The proposed system is a hierarchical algorithm composed of four main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output and a refinement of the previous decision stage performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset frame of the active event is obtained. In Fig.\ref{fig:flow-chart} the phases of the algorithm are depicted.
 
@@ -137,15 +135,15 @@ For each audio sequence, we performed the chunk-based CNN classification on the 
 the first frame of the contiguous block resulting to have the highest network output average (which correspond to the probability to belog to the event class) was indicated as event onset instant.
 
 \section{Experimental Set-Up}
-\label{sec:pagestyle}
+\label{sec:experiment}
 According to the DCASE 2017 guidelines, the performance of the proposed algorithm has been assessed firstly by using the development dataset for training and validation of the system. Then, a blind test on the provided evaluation dataset was performed with the model achieving the highest performance. The performance metric of the DCASE 2017 challenge is the event-based error rate calculated using onset-only condition with a collar of 500 ms. Additionally, event-based F-score with a 500 ms onset-only collar was calculated. Detailed information on metrics calculation is available in \cite{Mesaros2016_MDPI}. The algorithm has been implemented in the Python language using Keras\footnote{https://keras.io/} and Theano \cite{Theano2016short} as deep learning libraries. All the experiments were performed on a computer equipped with a 6-core Intel i7, 32\,GB of RAM and a Nvidia Titan X graphic card.
 
-\subsection{MLP Event Detection Stage}
+\subsection{First Event Detection Stage}
 %random search per la ricerca di parametri di layout della rete NN: validation split del dcase 
 %Per goni rete è stata effettuata un gridsearch sui parametri di post processing per l ottimizzazione del ER
 %E' stata selezionata la rete che ha ottenuto l' ER più basso
 %La rete selezionata è stata trainata nuovamente con aggiungendo al trainset delle sequenze  contenente gunshot per bilanciare i secondi di materiale degli eventi
-The performance of the MLP event detection stage has been assessed by exploring the networks topology with a random search strategy \cite{bergstra2012random}. Table XX shows the parameters explored in the random search, as well as the prior distribution and ranges. The
+The performance of the first event detection stage has been assessed by exploring the networks topology with a random search strategy \cite{bergstra2012random}. Table XX shows the parameters explored in the random search, as well as the prior distribution and ranges. The
 number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. The neural networks were trained on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$. The maximum number of epochs was set to 300. A successive grid search was performed for each network configuration evaluated in the random seach, in order to find the post-processing parameters yelding the minimum error rate. Investigated parameters in the grid search were: exponential window $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table XX.
 
 %TODO: add table with random search parameters and distributions + gridsearch ranges
@@ -168,34 +166,26 @@ To design the best CNN model for our purposes, from the dataset composed as desc
 \subsection{Evaluation Phase}
 %Descrizione con img della fase di valutazione
 %Scelta th 0.20 invece che 0.25: per favorile meno deletion a discapito delle insertion. La cnn pensa a eliminare le insertion classificandole come bck
-Once the best performing models were found, during the validation stage we performed a fine tuning of the post processing parameters of the event detection MLP in order to assess the performance of the whole system. In fact, the hierarchical architecture of the algorithm permits to set a lower threshold in the first decision stage in order to reduce the deletions to the detriment of some insertions that will be removed by the successive decision stage. The parameters of the best performing system are reported in Table YY.
+Once the best performing models were found, during the validation stage we performed a fine tuning of the post processing parameters of the event detection MLP in order to assess the performance of the whole system. In fact, the hierarchical architecture of the algorithm permits to set a lower threshold in the first decision stage in order to reduce the deletions to the detriment of some insertions that will be removed by the successive decision stage. The parameters of the best performing system are reported in Table YY. It is necessary to notice that in this challenge task the event target class (not its presence or absence) was a prior knowledge, thus in evaluation phase the illustrated procedure is applicable independently to different sequences each potentially containing the respective target event. The final score is then computed overall.
 \section{Results}
-Error rate su base evento prima rete: 
-Fmeasure cnn:
-
-Risultato finale 0.18 più report per classi ( evetuale discussio sui babycry che nn vengono classificati bene )
-\label{sec:typestyle}
+\label{sec:results}
+%Error rate su base evento prima rete: 
+%Fmeasure cnn:
+%
+%Risultato finale 0.18 più report per classi ( evetuale discussio sui babycry che nn vengono classificati bene )
+%\label{sec:typestyle}
+%TODO DIEGO controlla score
+In this section, the obtained results in terms of event error rate are discussed. The error rate based on the event detection of the first stage is equal to 0.25 and its respective F-measure is 88\%. After the CNN-based refinement stage, the final overal error rate and F-measure are respectively equal to 0.18 and 90.9\%. With respect to the DCASE 2017 baseline system the improvement in terms of error rate reduction is equal to 0.35.  In table ZZ are reported the scores for the two stages of the proposed system and the baseline.
 
 \subsection{Real Scenario application}
-Descrizione scenario reale: trainig cnn su 4 classi
-risultato finale 0.23
+%Descrizione scenario reale: trainig cnn su 4 classi
+%risultato finale 0.23
+%non metterei in tabella perchè farebbe confusione,  magari in un extended paper lo faremo
+In our investigation we evaluated also a system applicable in a real word scenario, where the event target class is not knowable in advance. In this case the role of the CNN other than refine the MLP event detection is also to classify the event class. For this setup we achieved an overall error rate equal to 0.23 and a respective F-measure of 90\%.
 
-\section{Conclusion}
-\label{sec:majhead}
-
-%
-%Fig.~\ref{fig:results}. 
-
-% Below is an example of how to insert images. 
-%% -------------------------------------------------------------------------
-
-%
-%\begin{equation}
-%  \label{eqn:wave_equation}
-%    \Delta^2p(x,y,z,t)-
-%    \displaystyle\frac{1}{c^2}\frac{\partial^2p(x,y,z,t)}{\partial t^2}=0,
-%\end{equation}
-
+\section{Conclusion and Outlook}
+\label{sec:conclusion}
+ In this paper, a hierarchic multi-scaled neural network based approach for rare sound event detection is presented.  We extracted acoustic features from the audio signals, then the event detection is performed by an MLP-based stage and refined by a CNN-based decision stage, each with dedicated post processing procedures. To assess the performance of the algorithm we conducted experiments on the development dataset from the DCASE 2017 challenge setup. According to the challenge specifications, the performance of the system are evaluated in terms of event-based error rate calculated using onset-only condition with a collar of 500 ms on the validation subset, achieving an error rate equal to 0.23 with respect to an error rate equal to 0.53 of the baseline system. Future work will comprise the exploitation of event dedicated acoustic features, to better focus on the distinctive tracts given by the heterogeneous nature of the events. A deeper focus will be given also to the temporal evolution of the signal by means of recurrent structure, such as Long Short Term Memory (LSTM) Neural Networks \cite{hochreiter1997long}.
 
 
 % -------------------------------------------------------------------------
@@ -203,37 +193,6 @@ risultato finale 0.23
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
 %
-% or list them by yourself
-% \begin{thebibliography}{9}
-% 
-% \bibitem{dcase2016web}
-%   \url{http://www.cs.tut.fi/sgn/arg/dcase2016/}.
-%
-% \bibitem{IEEEPDFSpec}
-%   {PDF} specification for {IEEE} {X}plore$^{\textregistered}$,
-%   \url{http://www.ieee.org/portal/cms_docs/pubs/confstandards/pdfs/IEEE-PDF-SpecV401.pdf}.
-%
-% \bibitem{PDFOpenSourceTools}
-%   Creating high resolution {PDF} files for book production with 
-%   open source tools, 
-%   \url{http://www.grassbook.org/neteler/highres_pdf.html}.
-%
-% \bibitem{eWilliams1999}
-% E. Williams, \emph{Fourier Acoustics: Sound Radiation and Nearfield Acoustic
-%   Holography}. London, UK: Academic Press, 1999.
-% 
-% \bibitem{ieeecopyright}
-%   \url{http://www.ieee.org/web/publications/rights/copyrightmain.html}.
-%
-% \bibitem{cJones2003}
-% C. Jones, A. Smith, and E. Roberts, ``A sample paper in conference
-%   proceedings,'' in \emph{Proc. IEEE ICASSP}, vol. II, 2003, pp. 803--806.
-% 
-% \bibitem{aSmith2000}
-% A. Smith, C. Jones, and E. Roberts, ``A sample paper in journals,'' 
-%   \emph{IEEE Trans. Signal Process.}, vol. 62, pp. 291--294, Jan. 2000.
-% 
-% \end{thebibliography}
 
 
 \end{sloppy}
