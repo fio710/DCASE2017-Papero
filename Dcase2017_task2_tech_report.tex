@@ -69,8 +69,8 @@
 \begin{sloppy}
 
 \begin{abstract}
-We propose a system for rare sound event detection using hierarchical and multi-scaled approach based on Multi Layer Perceptron (MLP) and Convolutional Neural Networks(CNN). 
-It is our contribution to the rare sound event detection task of the IEEE AASP Challenge on  Detection and Classification of Acoustic Scenes and Events (DCASE2017). The task consists on detection of event onset from artificially generated mixtures. Acoustic features are extracted from the acoustic signals, successively first event detection stage is performed by an MLP architecture which proposes contiguous blocks of frames to the second stage. The CNN refines the event detection of the prior network, intrinsically operating on a multi-scaled resolution and discarding blocks that contain background wrongly classified by the MLP as event. Finally the effective onset time of the active event is obtained.
+We propose a system for rare sound event detection using hierarchical and multi-scaled approach based on Multi Layer Perceptron (MLP) and Convolutional Neural Networks (CNN). 
+It is our contribution to the rare sound event detection task of the IEEE AASP Challenge on  Detection and Classification of Acoustic Scenes and Events (DCASE2017). The task consists on detection of event onset from artificially generated mixtures. Acoustic features are extracted from the acoustic signals, successively first event detection stage is performed by an MLP based neural network which proposes contiguous blocks of frames to the second stage. The CNN refines the event detection of the prior network, intrinsically operating on a multi-scaled resolution and discarding blocks that contain background wrongly classified by the MLP as event. Finally the effective onset time of the active event is obtained.
 The achieved overall error rate and F-measure on the development testset are respectively equal to 0.18 and 90.9\%.
 \end{abstract}
 
@@ -86,18 +86,15 @@ DCASE2017, Rare sound event detection, MLP, CNN, \textit{LogMel}
 %2 parole su dcase daaset + ref a loro
 
 
-The field of computational auditory scene analysis (CASA) cover many topics. Nowadays, one of the most importat topic is the automatic sound event detection (SED). SED is defined as the task of analysing a continuous audio
-signal in order to extract a description of the sound events
-occurring in the audio stream. This description is commonly
-expressed as a label that marks the start, the ending, and the
-nature of the occurred sound (e.g., children crying, cutlery,
-glass jingling).
-Task 2 of DCASE challenge 2017 \cite{dcase2017web} consists in determining the precise onset of three types of sounds: "babycry", "glassbreak" and "gun shot". 
+The field of computational auditory scene analysis (CASA) covers many topics. 
+Nowadays, one of the most important topic is the automatic sound event detection (SED). 
+SED is defined as the task of analysing a continuous audio signal in order to extract a description of the sound events occurring in the audio stream. This description is commonly expressed as a label that marks the start, the ending, and the nature of the occurred sound (e.g., children crying, cutlery, glass jingling).
+Task 2 of DCASE challenge 2017 \cite{dcase2017web} consists in determining the precise onset time of three types of sounds: "babycry", "glassbreak" and "gun shot" eventually present in artificially generated audio sequences. The background audio material belongs to the TUT Acoustic Scenes 2016 dataset and it contains recordings from 15 different audio scenes.
 
 \section{Proposed Method}
 \label{sec:proposed-meth}
 %algo composto da 4 stadi principali: eat extr - event detection - multiscaled detection refinement - event onset annotation 
-The proposed system is a hierarchical algorithm composed of four main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output and a refinement of the previous decision stage performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset frame of the active event is obtained. In Fig.\ref{fig:flow-chart} the phases of the algorithm are depicted.
+The proposed system is a hierarchical algorithm composed of four main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output. Then, a refinement of the previous decision stage is performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset time of the active event is obtained. In Fig.\ref{fig:flow-chart} the phases of the algorithm are depicted.
 
 \begin{figure}[t]
   \centering
@@ -105,12 +102,13 @@ The proposed system is a hierarchical algorithm composed of four main stages: th
   \caption{Flow chart of the proposed method for rare sound event detection.}
   \label{fig:flow-chart}
 \end{figure}
+%TODO sistemare caption che nnon mi piace
 
 \subsection{Feature Extraction}
 The feature extraction stage operates on mono audio signals sampled at 44.1 kHz. For our purpose, we exploit \textit{LogMel} as feature set, following results obtained for the baseline system of the DCASE2017 challenge \cite{DCASE2017challenge}. \textit{LogMel} coefficients are obtained by filtering the magnitude spectrum with a filter-bank composed of 40 filters evenly spaced in the mel frequency scale and then computing the logarithm of the energy of each band. The used frame size is equal to 40 ms and the frame step is equal to 20 ms. 
 The range of feature values is then normalized according to the mean and the standard deviation computed on the training sets of the neural networks.
 \subsection{Multilayer Perceptron Neural Network}
-The MLP artificial neural network was introduced in 1986 \cite{Rumelhart86-LRB}. The main element is the artificial neuron, consisting in an activation function applied to the sum of the weighted inputs. Neurons are then arranged in layers, with feed forward connections from one layer to the next. The supervised learning of the network makes use of the stochastic gradient descent with error back-propagation algorithm. The output layer is formed by two units with the \textit{softmax} non-linear function, defined as:  $\varphi(x_k) = e^{x_k}/\sum_{j=1}^{2}e^{x_j}$ for $k=1,2$. The outputs of the softmax layer represent the probabilities that a sample belongs to the background or the event class. 
+The MLP artificial neural network was introduced in 1986 \cite{Rumelhart86-LRB}. The main element is the artificial neuron, consisting in an activation function applied to the sum of the weighted inputs. Neurons are then arranged in layers, with feed forward connections from one layer to the next. The supervised learning of the network makes use of the stochastic gradient descent with error back-propagation algorithm. In this case the output layer is formed by two units with the \textit{softmax} non-linear function, defined as:  $\varphi(x_k) = e^{x_k}/\sum_{j=1}^{2}e^{x_j}$ for $k=1,2$. The outputs of the softmax layer represent the probabilities that a sample belongs to the background or the event class. 
 The network is designed to consider a temporal context, thus the current feature vector $\mathbf{x}[t]$ at the frame index $t$ and a context size equal to $C$ is concatenated with the previous feature vectors obtaining:
 \begin{equation}
 \mathbf{x}[t] =  \{\mathbf{x}[t - c],\ldots,\mathbf{x}[t-1],\mathbf{x}[t]\},
@@ -118,7 +116,7 @@ The network is designed to consider a temporal context, thus the current feature
 with $c = 1, \dots, C$. Weights training is accomplished by the AdaDelta stochastic gradient-based optimisation algorithm \cite{zeiler2012adadelta}, which is an extension of the Adagrad \cite{duchi2011adaptive} algorithm. It was chosen because it is well-suited for dealing with sparse data and its robustness to different choices of model hyperparameters. Furthermore no manual tuning of learning rate is required. In addition, the dropout technique was employed during the neural network training to prevent overfitting and increase the generalisation performance of the neural network in frame classification \cite{srivastava2014dropout}. 
 
 \subsubsection{Post Processig}
-As network output signal we consider the output of the neuron corresponding to the event class. It is convolved with an exponential decay window of length ($w$), then it is processed with a sliding median filter and finally a threshold $\theta$ is applied.
+As network output signal we consider the output of the neuron corresponding to the event class. It is convolved with an exponential decay window of length $w$, then it is processed with a sliding median filter with kernel size $k$ and finally a threshold $\theta$ is applied.
 
 \subsection{Convolutional Neural Network}
 %lavora su base chunk 20 frame: organizzazione input (chunk da 20 non overlappati) e label 
@@ -126,8 +124,8 @@ As network output signal we consider the output of the neuron corresponding to t
 %cleassificazione chunk ovellappati (chunk size -1 )
 
 CNN is a feed-forward neural network \cite{Yann-cnn-1998} usually composed of three types of layers: convolutional layers, pooling layers and layers of neurons. The convolutional layer performs the mathematical operation of convolution between a multi-dimensional input and a fixed size kernel. Successively, a non-linearity is applied element-wise. The kernels are generally small compared to the input, allowing CNNs to process large inputs with few learnable parameters. Successively, a pooling layer is usually applied, in order to reduce the feature map dimensions. Finally, at the top of the network, an MLP layer is applied.
-The aim of the CNN is to discriminate the event, selected from the previous network, from the background. The network is trained as a two-class classifier on non-overlapped audio chunk of logmel frames with resulting 2D input dimension of $40\times20$. In the case of audio task, CNN usually exploits the temporal evolution of the signal \cite{thomas2014analyzing} due of is nature. 
-In the classification phase the audio event are evaluated based on chunk $40\times20$ with an overlapp of 95\% (1 frame shift). This leads to an analysis of the audio event at different time and frequency resolution with respect to previous network. 
+The aim of the CNN is to discriminate the event, selected from the previous network, from the background. The network is trained as a two-class classifier on non-overlapped audio chunk of logmel frames with resulting 2D input dimension of $40\times20$. In the case of audio task, CNN usually exploits the temporal evolution of the signal \cite{thomas2014analyzing} due of its nature. 
+In the classification phase the audio event are evaluated based on frame chunk $40\times20$ with an overlapp of 95\% (1 frame shift). This leads to an analysis of the audio event at different time and frequency resolution with respect to previous stage. 
 %TODO dire che il chunk size è stato scelto = metà della minima lunghezza dell'evento nel develset
 \subsubsection{Post Processig }
 %per ogni seq analizzo tutti gli eventi. Scarto quelli classificati con bck . Prendo il primo evento classificato come non bck perche lo scopo è beccare l onseth
