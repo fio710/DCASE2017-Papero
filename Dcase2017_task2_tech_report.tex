@@ -94,7 +94,7 @@ occurring in the audio stream. This description is commonly
 expressed as a label that marks the start, the ending, and the
 nature of the occurred sound (e.g., children crying, cutlery,
 glass jingling).
-Task 2 of DCASE challange 2017 \cite{dcase2017web} consists in determining the precise onset of three types of sounds: babycry, glassbreak and gunshoot. 
+Task 2 of DCASE challenge 2017 \cite{dcase2017web} consists in determining the precise onset of three types of sounds: "babycry", "glassbreak" and "gun shot". 
 
 \section{Proposed Method}
 \label{sec:pagelimit}
@@ -110,21 +110,25 @@ The network is designed to consider a temporal context, thus the current feature
 \begin{equation}
 \mathbf{x}[t] =  \{\mathbf{x}[t - c],\ldots,\mathbf{x}[t-1],\mathbf{x}[t]\},
 \end{equation}
-with $c = 1, \dots, C$.
+with $c = 1, \dots, C$. Weights training is accomplished by the AdaDelta stochastic gradient-based optimisation algorithm \cite{zeiler2012adadelta}, which is an extension of the Adagrad \cite{duchi2011adaptive} algorithm. It was chosen because it is well-suited for dealing with sparse data and its robustness to different choices of model hyperparameters. Furthermore no manual tuning of learning rate is required. In addition, the dropout technique was employed during the neural network training to prevent overfitting and increase the generalisation performance of the neural network in frame classification \cite{srivastava2014dropout}. 
 
 \subsubsection{Post Processig}
 As network output signal we consider the output of the neuron corresponding to the event class. It is convolved with an exponential decay window of length ($w$), then it is processed with a sliding median filter and finally a threshold $\theta$ is applied.
 
 \subsection{Convolutional Neural Network}
-lavora su base chunk 20 frame: organizzazione input (chunk da 20 non overlappati) e label 
-descrizione di come lavorano i kernel per efatizzare la multiresolution approach
-cleassificazione chunk ovellappati (chunk size -1 )
+%lavora su base chunk 20 frame: organizzazione input (chunk da 20 non overlappati) e label 
+%descrizione di come lavorano i kernel per efatizzare la multiresolution approach
+%cleassificazione chunk ovellappati (chunk size -1 )
 
 CNN is a feed-forward neural network \cite{Yann-cnn-1998} usually composed of three types of layers: convolutional layers, pooling layers and layers of neurons. The convolutional layer performs the mathematical operation of convolution between a multi-dimensional input and a fixed size kernel. Successively, a non-linearity is applied element-wise. The kernels are generally small compared to the input, allowing CNNs to process large inputs with few learnable parameters. Successively, a pooling layer is usually applied, in order to reduce the feature map dimensions. Finally, at the top of the network, an MLP layer is applied.
-The aims of the CNN is to discriminate the event, selected from the previous network, from the background. The network is trained as a biclass classifier on non-overapped audio chunk of logmel frames with resulting 2D input dimension of 40x20. In the case of audio task, CNN usually exploits the temporal evolution of the signal \cite{thomas2014analyzing} due of is nature. 
-In the classification phase the audio event are evaluated based on chunk 40x20 with an overlapp of 95\% (1 frame shift). This leads to an analisy of the audio event at different time and frequency resolution with respect to previous network. 
+The aim of the CNN is to discriminate the event, selected from the previous network, from the background. The network is trained as a two-class classifier on non-overlapped audio chunk of logmel frames with resulting 2D input dimension of $40\times20$. In the case of audio task, CNN usually exploits the temporal evolution of the signal \cite{thomas2014analyzing} due of is nature. 
+In the classification phase the audio event are evaluated based on chunk $40\times20$ with an overlapp of 95\% (1 frame shift). This leads to an analysis of the audio event at different time and frequency resolution with respect to previous network. 
+%TODO dire che il chunk size è stato scelto = metà della minima lunghezza dell'evento nel develset
 \subsubsection{Post Processig }
-per ogni seq analizzo tutti gli eventi. Scarto quelli classificati con bck . Prendo il primo evento classificato come non bck perche lo scopo è beccare l onseth
+%per ogni seq analizzo tutti gli eventi. Scarto quelli classificati con bck . Prendo il primo evento classificato come non bck perche lo scopo è beccare l onseth
+For each audio sequence, we performed the chunk-based CNN classification on the contiguous blocks of frames detected by the MLP event detection stage. Between the frame chunks classified as event by the CNN, %those with the highest network output (which correspond to the probability to belog to the event class) 
+the first frame of the contiguous block resulting to have the highest network output average (which correspond to the probability to belog to the event class) was indicated as event onset instant.
+
 \section{Experimental Set-Up}
 \label{sec:pagestyle}
 According to the DCASE 2017 guidelines, the performance of the proposed algorithm has been assessed firstly by using the development dataset for training and validation of the system. Then, a blind test on the provided evaluation dataset was performed with the model achieving the highest performance. The performance metric of the DCASE 2017 challenge is the event-based error rate calculated using onset-only condition with a collar of 500 ms. Additionally, event-based F-score with a 500 ms onset-only collar was calculated. Detailed information on metrics calculation is available in \cite{Mesaros2016_MDPI}. 
@@ -135,19 +139,20 @@ According to the DCASE 2017 guidelines, the performance of the proposed algorith
 %E' stata selezionata la rete che ha ottenuto l' ER più basso
 %La rete selezionata è stata trainata nuovamente con aggiungendo al trainset delle sequenze  contenente gunshot per bilanciare i secondi di materiale degli eventi
 The performance of the MLP event detection stage has been assessed by exploring the networks topology with a random search strategy \cite{bergstra2012random}. Table XX shows the parameters explored in the random search, as well as the prior distribution and ranges. The
-number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. For each of these a grid search was performed in order to find the post-processing parameters yelding the minimum error rate. Investigated parameters in the grid search were: exponential window $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table XX.
+number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. The neural networks were trained on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$. The maximum number of epochs was set to 300. A successive grid search was performed for each network configuration evaluated in the random seach, in order to find the post-processing parameters yelding the minimum error rate. Investigated parameters in the grid search were: exponential window $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table XX.
 
 %TODO: add table with random search parameters and distributions + gridsearch ranges
 Because of the fast decay of "gun shot" sound, we the noticed that the audio segments containing this event were in small number with respect to the other samples. For this reason we trained the event detector MLP obtained from the random seach with an extended dataset, including 500 newly generated mixtures containing the "gun shot" sound event.
 At the end of the validation stage of the system the trained once again the neural network including all the mixtures in the development dataset furnished with the DCASE 2017 challenge package and the aforementioned 500 newly generated containing the "gun shot" sound event for a total of 3487 audio sequences.
 
 \subsection{Multiscaled Refinement Decision Stage}
-Per trainare la cnn abbiamo data in ingresso alla prima rete delle sequenze audio di solo bck. Gli eventi selezionati da questa rete rappresentano il materiale di training
-della classe bck per la cnn. Per le altre classi di eventi abbbiamo preso le porzioni di soli eventi mixed to bck relativi alle mixture fornite dal dcase e gli isolated events.
+%Per trainare la cnn abbiamo data in ingresso alla prima rete delle sequenze audio di solo bck. Gli eventi selezionati da questa rete rappresentano il materiale di training
+%della classe bck per la cnn. Per le altre classi di eventi abbbiamo preso le porzioni di soli eventi mixed to bck relativi alle mixture fornite dal dcase e gli isolated events.
+%
+%Abbiamo generato una stratified validation split del dataset appena descritto. 
+%Abbiamo effetuato una valutazione della cnn subase evento con la fmeasure.
+%Finally, sul validati
 
-Abbiamo generato una stratified validation split del dataset appena descritto. 
-Abbiamo effetuato una valutazione della cnn subase evento con la fmeasure.
-Finally, sul validati
 
 \subsection{Evaluation Phase}
 %Descrizione con img della fase di valutazione
