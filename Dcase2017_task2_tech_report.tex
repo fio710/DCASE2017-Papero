@@ -99,7 +99,14 @@ Task 2 of DCASE challenge 2017 \cite{dcase2017web} consists in determining the p
 \section{Proposed Method}
 \label{sec:pagelimit}
 %algo composto da 4 stadi principali: eat extr - event detection - multiscaled detection refinement - event onset annotation 
-The proposed system is a hierarchical algorithm composed of four main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output and a refinement of the previous decision stage performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset frame of the active event is obtained.
+The proposed system is a hierarchical algorithm composed of four main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output and a refinement of the previous decision stage performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset frame of the active event is obtained. In Fig.\ref{fig:flow-chart} the phases of the algorithm are depicted.
+
+\begin{figure}[t]
+  \centering
+  \centerline{\includegraphics[width=\columnwidth]{Images/approccio_finale.pdf}}
+  \caption{Flow chart of the proposed method for rare sound event detection.}
+  \label{fig:flow-chart}
+\end{figure}
 
 \subsection{Feature Extraction}
 The feature extraction stage operates on mono audio signals sampled at 44.1 kHz. For our purpose, we exploit \textit{LogMel} as feature set, following results obtained for the baseline system of the DCASE2017 challenge \cite{DCASE2017challenge}. \textit{LogMel} coefficients are obtained by filtering the magnitude spectrum with a filter-bank composed of 40 filters evenly spaced in the mel frequency scale and then computing the logarithm of the energy of each band. The used frame size is equal to 40 ms and the frame step is equal to 20 ms. 
@@ -131,7 +138,7 @@ the first frame of the contiguous block resulting to have the highest network ou
 
 \section{Experimental Set-Up}
 \label{sec:pagestyle}
-According to the DCASE 2017 guidelines, the performance of the proposed algorithm has been assessed firstly by using the development dataset for training and validation of the system. Then, a blind test on the provided evaluation dataset was performed with the model achieving the highest performance. The performance metric of the DCASE 2017 challenge is the event-based error rate calculated using onset-only condition with a collar of 500 ms. Additionally, event-based F-score with a 500 ms onset-only collar was calculated. Detailed information on metrics calculation is available in \cite{Mesaros2016_MDPI}. 
+According to the DCASE 2017 guidelines, the performance of the proposed algorithm has been assessed firstly by using the development dataset for training and validation of the system. Then, a blind test on the provided evaluation dataset was performed with the model achieving the highest performance. The performance metric of the DCASE 2017 challenge is the event-based error rate calculated using onset-only condition with a collar of 500 ms. Additionally, event-based F-score with a 500 ms onset-only collar was calculated. Detailed information on metrics calculation is available in \cite{Mesaros2016_MDPI}. The algorithm has been implemented in the Python language using Keras\footnote{https://keras.io/} and Theano \cite{Theano2016short} as deep learning libraries. All the experiments were performed on a computer equipped with a 6-core Intel i7, 32\,GB of RAM and a Nvidia Titan X graphic card.
 
 \subsection{MLP Event Detection Stage}
 %random search per la ricerca di parametri di layout della rete NN: validation split del dcase 
@@ -153,6 +160,10 @@ At the end of the validation stage of the system the trained once again the neur
 %Abbiamo effetuato una valutazione della cnn subase evento con la fmeasure.
 %Finally, sul validati
 
+To compose the dataset for training and evaluation of the CNN we proceeded as follows: the samples of the event class were selected between the audio sections labelled as "baby cry", "glass break" and "gun shot" from the mixtures of the DCASE 2017 development dataset, in addition with the isolated events source signals. To obtain the background samples, we processed the sequences containing only background furnished with the DCASE 2017 development dataset with the first stage of the our algorithm. Thus, the frames detected as event in this case represent the "false positive" or "insertions" of the first stage. We used those frames as background samples in the CNN training phase to improve its refinement in the event detection process. 
+
+To design the best CNN model for our purposes, from the dataset composed as described above we generated a shuffle stratified validation split. We left out the 10\% of the samples as validation set for the CNN model and we selected the layout parameters of the neural network based on the F-measure score obtained on this data sub-set. The best performing model was composed as follows: three convolutional kernel layers respectively with $[16, 8, 8]$ filters each of these of size equal to $3\times3$. Each convolutional layer was followed by a max pooling layer with kernels of size $2\times2$. A dense layer composed of 64 neurons with $tanh$ activation function is applyed before the network output layer. The moodel was trained for 40 epochs on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$.
+
 
 \subsection{Evaluation Phase}
 %Descrizione con img della fase di valutazione
@@ -172,17 +183,12 @@ risultato finale 0.23
 \section{Conclusion}
 \label{sec:majhead}
 
-
-Fig.~\ref{fig:results}. 
+%
+%Fig.~\ref{fig:results}. 
 
 % Below is an example of how to insert images. 
 %% -------------------------------------------------------------------------
-%\begin{figure}[t]
-%  \centering
-%  \centerline{\includegraphics[width=\columnwidth]{fig1a}}
-%  \caption{Example of a figure with experimental results.}
-%  \label{fig:results}
-%\end{figure}
+
 %
 %\begin{equation}
 %  \label{eqn:wave_equation}
