@@ -7,7 +7,7 @@
 
 \documentclass{article}
 \usepackage{dcase2017,amsmath,graphicx,url,times,booktabs, tabularx}
-\usepackage{color}
+%\usepackage{color}
 \usepackage{multicol}        % used for the two-column index
 % Example definitions.
 % --------------------
@@ -18,31 +18,6 @@
 % Title.
 % --------------------
 \title{A HIERARCHIC MULTI-SCALED APPROACH FOR RARE SOUND EVENT DETECTION}
-
-% Single addresses (uncomment and modify for single-address case).
-% --------------------
-% \name{Author(s) Name(s)\thanks{Thanks to XYZ agency for funding.}}
-% \address{Author Affiliation(s)}
-%
-% For example:
-% ------------
-% \address{School\\
-%       Department\\
-%       Address}
-
-% Two addresses
-% --------------------
-%\twoauthors
-%  {John Doe\sthanks{Thanks to ABC agency for funding.}}
-%    {Fictional University\\
-%Computer Science Dept., 2133 Long Road\\
-%     Gotham, NY 10027, USA \\
-%     john@fictional.edu}
-%  {Maria Ortega\sthanks{Thanks to XYZ agency for funding.}}
-%    {  University of the Imagination \\
-%     Big Engineering Building, 8765 Dream Blvd. \\
-%     New Chicago, IL 60626, USA \\
-%     maria@imagination.edu}
 
 % Authors in two lines, use in case of many authors with many affiliations (uncomment and modify).
 % --------------------
@@ -97,13 +72,13 @@ Task 2 of DCASE challenge 2017 \cite{dcase2017web} consists in determining the p
 %algo composto da 4 stadi principali: eat extr - event detection - multiscaled detection refinement - event onset annotation 
 The proposed system is a hierarchical algorithm composed of four main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output. Then, a refinement of the previous decision stage is performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset time of the active event is obtained. In Fig.\ref{fig:flow-chart} the phases of the algorithm are depicted.
 
-%\begin{figure}[t]
-%  \centering
-%  \centerline{\includegraphics[width=\columnwidth]{Images/approccio_finale.pdf}}
-%  \caption{Flow chart of the proposed method for rare sound event detection.}
-%  \label{fig:flow-chart}
-%\end{figure}
-%%TODO sistemare caption che nnon mi piace
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{Images/approccio_finale.pdf}
+  \caption{Flow chart of the proposed method for rare sound event detection.}
+  \label{fig:flow-chart}
+\end{figure}
+%TODO sistemare caption che nnon mi piace
 
 \subsection{Feature Extraction}
 The feature extraction stage operates on mono audio signals sampled at 44.1 kHz. For our purpose, we exploit \textit{LogMel} as feature set, following results obtained for the baseline system of the DCASE2017 challenge \cite{DCASE2017challenge}. \textit{LogMel} coefficients are obtained by filtering the magnitude spectrum with a filter-bank composed of 40 filters evenly spaced in the mel frequency scale and then computing the logarithm of the energy of each band. The used frame size is equal to 40 ms and the frame step is equal to 20 ms. 
@@ -165,8 +140,8 @@ The performance of the first event detection stage has been assessed by explorin
     \hline
   \end{tabular}
 \end{table}
-
-
+%%
+%
 \begin{table}[t]
   \caption{Post processing parameters optimized in grid search phase, and their ranges.}
   \label{tbl:post-proc-params-mlp}
@@ -184,8 +159,8 @@ The performance of the first event detection stage has been assessed by explorin
     Median Filter & [9-13] & 2\\
     \hline                                       
   \end{tabular}
-  
 \end{table}
+
 % \begin{table}[t]
 %   \caption{Hyper-parameters optimized in the random-search phase, and their range.}\label{tbl:hyper-params}
 %   \centering
@@ -206,9 +181,9 @@ The performance of the first event detection stage has been assessed by explorin
 %     \hline
 %     Stride & [1x1-3x3]& uniform & Learning rate & [$10^{-4}$-$10^{-2}$]  & log-unifom\\
 %     \hline
-
 %   \end{tabular}
 % \end{table}
+
 Table \ref{tbl:hyper-params-mlp} shows the parameters explored in the random search, as well as the prior distribution and ranges. The
 number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. The neural networks were trained on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$. The maximum number of epochs was set to 300. A successive grid search was performed for each network configuration evaluated in the random seach, in order to find the post-processing parameters that yielded the minimum error rate. Investigated parameters in the grid search were: exponential window length $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table \ref{tbl:post-proc-params-mlp}. The model with resulting minimum error rate was composed as follows: the input layer accepted 120 values for each frame index, corresponding to a context size $C=3$, the hidden layers were two dense layers respectively of size $[631,419]$, to whom the $ReLU$ activation function is applied and finally the output layer made of two neurons with the softmax function.
 
@@ -217,6 +192,7 @@ Because of the fast decay of  sound, we the noticed that the audio segments cont
 At the end of the validation stage of the system the neural network were trained including all the mixtures in the development dataset furnished with the DCASE 2017 challenge package and the aforementioned 500 newly generated containing the ``gun shot'' sound event for a total of 3487 audio sequences.
 
 \subsection{Multiscaled Refinement Decision Stage}
+
 %Per trainare la cnn abbiamo data in ingresso alla prima rete delle sequenze audio di solo bck. Gli eventi selezionati da questa rete rappresentano il materiale di training
 %della classe bck per la cnn. Per le altre classi di eventi abbbiamo preso le porzioni di soli eventi mixed to bck relativi alle mixture fornite dal dcase e gli isolated events.
 %
@@ -235,21 +211,15 @@ To design the best CNN model for our purposes, we generated a shuffle stratified
 Once the best performing models were found, during the validation stage we performed a fine tuning of the post processing parameters of the MLP-based event detection in order to assess the performance of the whole system. In fact, the hierarchical architecture of the algorithm permits to set a lower threshold in the first decision stage in order to reduce the deletions to the detriment of some insertions. They are removed by the successive decision stage making use of the multi-scale processing acted by the CNN. 
 %\textcolor{red}{A complete overview of the parameters of the best performing system are reported in Table YY}. 
 It is necessary to notice that in this challenge task the event target class (not its presence or absence) was a prior knowledge, thus in evaluation phase the illustrated procedure is applicable independently to different sequences each potentially containing the respective target event. The final score is then computed overall.
-\textcolor{red}{In table YY are reported the parameters used in each of the four submission that we performed}. 
+%\textcolor{red}{In table YY are reported the parameters used in each of the four submission that we performed}. 
 
 \section{Results}
 \label{sec:results}
-%Error rate su base evento prima rete: 
-%Fmeasure cnn:
-%
-%Risultato finale 0.18 più report per classi ( evetuale discussio sui babycry che nn vengono classificati bene )
-%\label{sec:typestyle}
-%TODO DIEGO controlla score---------------------------------------------------------------------------------------------------------------------------------
-%In this section, the obtained results in terms of event error rate are discussed. 
-The error rate based on the event detection of the first stage is equal to 0.23 %running onset_detection with th=0.25 , wl=70 , k=11 , psh=10: ER=0.23293172690763053 -- IN=0.107095046854083 -- DE=0.12583668005354753
- and its respective F-measure is 88.0\%. After the CNN-based refinement stage, the final overall error rate and F-measure are respectively equal to 0.18 and 90.9\%. %running onset_detection with th=0.2 , wl=70 , k=11 , psh=30: ER=0.29049531459170014 -- IN=0.19143239625167335 -- DE=0.09906291834002677. La predict shif (psh) di 30 serve per selezionare in maniera più centrata gli eventi per la cnn
- \textcolor{red}{The post processing parameter used to select the MLP network with the lower ER and the value used in the final evaluation phase are reported in table \ref{tbl:post-proc-params}.}
- \begin{table}[t]
+The error rate based on the event detection of the first stage is equal to 0.23 and its respective F-measure is 88.0\%. 
+After the CNN-based refinement stage, the final overall error rate and F-measure are respectively equal to 0.18 and 90.9\%. 
+The post processing parameter used to select the MLP network with the lower ER and the value used in the final evaluation phase are reported in table \ref{tbl:post-proc-params}.
+
+\begin{table}[t]
   \caption{Post processing parameters. ER stays for only-onset error rate}
   \label{tbl:post-proc-params}
   \centering
@@ -266,32 +236,32 @@ The error rate based on the event detection of the first stage is equal to 0.23 
     Median Filter & 11 & 11\\
     \hline                                       
   \end{tabular}
-  
 \end{table}
- \begin{table}[t]
-  \caption{Final Scores. ER stays for only-onset error rate}
-  \label{tbl:finalScore}
-  \centering
-  \footnotesize
-  \begin{tabular} {| c | c | c | c | c |}
-    \hline
-    & \multicolumn{2}{c|}{Proposed Method}}&\multicolumn{2}{c|}{Baseline}\\
-    \hline  
-                & ER    &  F-score  & ER    &  F-score  \\  
-    \hline                                     
-    Baby cry    & 0.22  & 89.0 \%      & 0.67  & 72.0 \%\\
-    \hline                                     
-    Glass break & 0.14  & 92.8 \%        & 0.22  & 88.5 \%\\
-    \hline
-    Gun shot    & 0.18  & 91.0 \%        & 0.69  & 57.4 \%\\
-    \hline
-    \textbf{Average} & \textbf{0.18} & \textbf{90.91 \%}& \textbf{0.53} & \textbf{72.7\%}\\
-    \hline
-                                      
-  \end{tabular}
-  
-\end{table}
- With respect to the DCASE 2017 baseline system the improvement in terms of error rate reduction is equal to 0.35.  In Table \ref{tbl:finalScore} are reported the scores for the two stages of the proposed system and the baseline.
+
+
+% \begin{table}[t]
+%  \caption{Final Scores. ER stays for only-onset error rate}
+%  \label{tbl:finalScore}
+%  \centering
+%  \footnotesize
+%  \begin{tabular} {| c | c | c | c | c |}
+%    \hline
+%    & \multicolumn{2}{c|}{Proposed Method}}&\multicolumn{2}{c|}{Baseline}\\
+%    \hline  
+%                & ER    &  F-score  & ER    &  F-score  \\  
+%    \hline                                     
+%    Baby cry    & 0.22  & 89.0 \%      & 0.67  & 72.0 \%\\
+%    \hline                                     
+%    Glass break & 0.14  & 92.8 \%        & 0.22  & 88.5 \%\\
+%    \hline
+%    Gun shot    & 0.18  & 91.0 \%        & 0.69  & 57.4 \%\\
+%    \hline
+%    \textbf{Average} & \textbf{0.18} & \textbf{90.91 \%}& \textbf{0.53} & \textbf{72.7\%}\\
+%    \hline                                    
+%  \end{tabular}
+%\end{table}
+
+With respect to the DCASE 2017 baseline system the improvement in terms of error rate reduction is equal to 0.35. In Table X are reported the scores for the two stages of the proposed system and the baseline.
 
 \subsection{Real Scenario application}
 %Descrizione scenario reale: trainig cnn su 4 classi
@@ -302,7 +272,7 @@ In our investigation we evaluated also a system applicable in a real word scenar
 \section{Conclusion and Outlook}
 \label{sec:conclusion}
  In this paper, a hierarchic multi-scaled neural network based approach for rare sound event detection is presented.  We extracted acoustic features from the audio signals, then the event detection is performed by an MLP-based stage and refined by a CNN-based decision stage, each with dedicated post processing procedures. To assess the performance of the algorithm we conducted experiments on the development dataset from the DCASE 2017 setup. According to the challenge specifications, the performance of the system are evaluated in terms of event-based error rate calculated using onset-only condition with a collar of 500 ms on the validation subset, achieving an error rate equal to 0.23 with respect to an error rate equal to 0.53 of the baseline system. Future work will comprise the exploitation of event dedicated acoustic features, to better focus on the distinctive tracts given by the heterogeneous nature of the events. A deeper focus will be given also to the temporal evolution of the signal by means of recurrent structure, such as Long Short Term Memory (LSTM) Neural Networks \cite{hochreiter1997long}.
-
+%
 
 % -------------------------------------------------------------------------
 % Either list references using the bibliography style file IEEEtran.bst
