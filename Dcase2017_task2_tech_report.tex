@@ -246,7 +246,7 @@ The post processing parameter used to select the MLP network with the lower ER a
 %  \footnotesize
 %  \begin{tabular} {| c | c | c | c | c |}
 %    \hline
-%    & \multicolumn{2}{c|}{Proposed Method}}&\multicolumn{2}{c|}{Baseline}\\
+%    \multicolumn{2}{c|}{Proposed Method}}& \multicolumn{2}{c|}{Baseline}\\
 %    \hline  
 %                & ER    &  F-score  & ER    &  F-score  \\  
 %    \hline                                     
@@ -261,7 +261,31 @@ The post processing parameter used to select the MLP network with the lower ER a
 %  \end{tabular}
 %\end{table}
 
-With respect to the DCASE 2017 baseline system the improvement in terms of error rate reduction is equal to 0.35. In Table X are reported the scores for the two stages of the proposed system and the baseline.
+ \begin{table}[t] 
+ 	\caption{Final Scores}\label{tbl:finalScore} 
+ 	\centering 
+ 	\footnotesize 
+ 	\begin{tabular} {| c | c | c | c | c |} 
+ 		\hline 
+ 		& \multicolumn{2}{c|}{Proposed Method}&\multicolumn{2}{c|}{Baseline}\\ 
+ 		\hline   
+ 		& ER    &  F-score  & ER    &  F-score  \\   
+ 		\hline                                      
+ 		Baby cry    & 0.22  & 89.0 \%      & 0.67  & 72.0 \%\\ 
+ 		\hline                                      
+ 		Glass break & 0.14  & 92.8 \%        & 0.22  & 88.5 \%\\ 
+ 		\hline 
+ 		Gun shot    & 0.18  & 91.0 \%        & 0.69  & 57.4 \%\\ 
+ 		\hline 
+ 		\textbf{Avarage} & \textbf{0.18} & \textbf{90.91 \%}& \textbf{0.53} & \textbf{72.7\%}\\ 
+ 		\hline 
+ 		
+ 	\end{tabular} 
+ 	
+ \end{table} 
+
+
+With respect to the DCASE 2017 baseline system the improvement in terms of error rate reduction is equal to 0.35. In Table \ref{tbl:finalScore} are reported the scores for the two stages of the proposed system and the baseline.
 
 \subsection{Real Scenario application}
 %Descrizione scenario reale: trainig cnn su 4 classi
