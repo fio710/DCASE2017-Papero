@@ -97,13 +97,13 @@ Task 2 of DCASE challenge 2017 \cite{dcase2017web} consists in determining the p
 %algo composto da 4 stadi principali: eat extr - event detection - multiscaled detection refinement - event onset annotation 
 The proposed system is a hierarchical algorithm composed of four main stages: the acoustic features extraction, the first event detection stage performed by a Multi Layer Perceptron Neural Network (MLP) and a dedicated smoothing procedure of its output. Then, a refinement of the previous decision stage is performed by a Convolutional Neural Network (CNN) which intrinsically operates on a multi-scaled resolution and discards blocks that contain background wrongly classified by the MLP as event. Finally by means of a statistical decision procedure the effective onset time of the active event is obtained. In Fig.\ref{fig:flow-chart} the phases of the algorithm are depicted.
 
-\begin{figure}[t]
-  \centering
-  \centerline{\includegraphics[width=\columnwidth]{Images/approccio_finale.pdf}}
-  \caption{Flow chart of the proposed method for rare sound event detection.}
-  \label{fig:flow-chart}
-\end{figure}
-%TODO sistemare caption che nnon mi piace
+%\begin{figure}[t]
+%  \centering
+%  \centerline{\includegraphics[width=\columnwidth]{Images/approccio_finale.pdf}}
+%  \caption{Flow chart of the proposed method for rare sound event detection.}
+%  \label{fig:flow-chart}
+%\end{figure}
+%%TODO sistemare caption che nnon mi piace
 
 \subsection{Feature Extraction}
 The feature extraction stage operates on mono audio signals sampled at 44.1 kHz. For our purpose, we exploit \textit{LogMel} as feature set, following results obtained for the baseline system of the DCASE2017 challenge \cite{DCASE2017challenge}. \textit{LogMel} coefficients are obtained by filtering the magnitude spectrum with a filter-bank composed of 40 filters evenly spaced in the mel frequency scale and then computing the logarithm of the energy of each band. The used frame size is equal to 40 ms and the frame step is equal to 20 ms. 
@@ -150,7 +150,7 @@ The performance of the first event detection stage has been assessed by explorin
   \footnotesize
   \begin{tabular} {|c | c | c|}
     \hline
-    Parameter     & Range & Distribution\\  
+    Parameter & Range & Distribution\\  
     \hline
     \hline                                     
     MLP layers Nr.  & [2 - 7]& uniform \\
@@ -164,22 +164,24 @@ The performance of the first event detection stage has been assessed by explorin
     Dropout & [Yes-No] & uniform\\
     \hline
   \end{tabular}
-
 \end{table}
+
+
 \begin{table}[t]
-  \caption{Post processing parameter optimized in gridsearch phase, and their range.}\label{tbl:post-proc-params-mlp}
+  \caption{Post processing parameters optimized in grid search phase, and their ranges.}
+  \label{tbl:post-proc-params-mlp}
   \centering
   \footnotesize
-  \begin{tabular} {|c | c |}
+  \begin{tabular} {|c | c | c |}
     \hline
-    Parameter     & Range \\  
+    Parameter     & Range  & Step\\  
     \hline
     \hline                                     
-    Threshold  & [0-0.7] \\
+    Threshold  & [0-0.7] & 0.01\\
     \hline                                     
-    Windows lenght & [10-90] \\
+    Windows length & [10-90] & 10 \\
     \hline
-    Median Filter & [9-11] \\
+    Median Filter & [9-13] & 2\\
     \hline                                       
   \end{tabular}
   
@@ -208,7 +210,7 @@ The performance of the first event detection stage has been assessed by explorin
 %   \end{tabular}
 % \end{table}
 Table \ref{tbl:hyper-params-mlp} shows the parameters explored in the random search, as well as the prior distribution and ranges. The
-number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. The neural networks were trained on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$. The maximum number of epochs was set to 300. A successive grid search was performed for each network configuration evaluated in the random seach, in order to find the post-processing parameters that yielded the minimum error rate. Investigated parameters in the grid search were: exponential window lenght $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table \ref{tbl:post-proc-params-mlp}. The model with resulting minimum error rate was composed as follows: the input layer accepted 120 values for each frame index, corresponding to a context size $C=3$, the hidden layers were two dense layers respectively of size $[631,419]$, to whom the $ReLU$ activation function is applied and finally the output layer made of two neurons with the softmax function.
+number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. The neural networks were trained on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$. The maximum number of epochs was set to 300. A successive grid search was performed for each network configuration evaluated in the random seach, in order to find the post-processing parameters that yielded the minimum error rate. Investigated parameters in the grid search were: exponential window length $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table \ref{tbl:post-proc-params-mlp}. The model with resulting minimum error rate was composed as follows: the input layer accepted 120 values for each frame index, corresponding to a context size $C=3$, the hidden layers were two dense layers respectively of size $[631,419]$, to whom the $ReLU$ activation function is applied and finally the output layer made of two neurons with the softmax function.
 
 %TODO: add table with random search parameters and distributions + gridsearch ranges
 Because of the fast decay of  sound, we the noticed that the audio segments containing this event were in small number with respect to the other samples. For this reason we trained the MLP-based event detector obtained from the random seach with an extended dataset, including 500 newly generated mixtures containing the ``gun shot'' sound event.
@@ -245,10 +247,11 @@ It is necessary to notice that in this challenge task the event target class (no
 %TODO DIEGO controlla score---------------------------------------------------------------------------------------------------------------------------------
 %In this section, the obtained results in terms of event error rate are discussed. 
 The error rate based on the event detection of the first stage is equal to 0.23 %running onset_detection with th=0.25 , wl=70 , k=11 , psh=10: ER=0.23293172690763053 -- IN=0.107095046854083 -- DE=0.12583668005354753
- and its respective F-measure is 88\%. After the CNN-based refinement stage, the final overal error rate and F-measure are respectively equal to 0.18 and 90.9\%. %running onset_detection with th=0.2 , wl=70 , k=11 , psh=30: ER=0.29049531459170014 -- IN=0.19143239625167335 -- DE=0.09906291834002677. La predict shif (psh) di 30 serve per selezionare in maniera più centrata gli eventi per la cnn
+ and its respective F-measure is 88.0\%. After the CNN-based refinement stage, the final overall error rate and F-measure are respectively equal to 0.18 and 90.9\%. %running onset_detection with th=0.2 , wl=70 , k=11 , psh=30: ER=0.29049531459170014 -- IN=0.19143239625167335 -- DE=0.09906291834002677. La predict shif (psh) di 30 serve per selezionare in maniera più centrata gli eventi per la cnn
  \textcolor{red}{The post processing parameter used to select the MLP network with the lower ER and the value used in the final evaluation phase are reported in table \ref{tbl:post-proc-params}.}
  \begin{table}[t]
-  \caption{Post processing parameter}\label{tbl:post-proc-params}
+  \caption{Post processing parameters. ER stays for only-onset error rate}
+  \label{tbl:post-proc-params}
   \centering
   \footnotesize
   \begin{tabular} {| c | c | c |}
@@ -266,12 +269,13 @@ The error rate based on the event detection of the first stage is equal to 0.23 
   
 \end{table}
  \begin{table}[t]
-  \caption{Final Scores}\label{tbl:finalScore}
+  \caption{Final Scores. ER stays for only-onset error rate}
+  \label{tbl:finalScore}
   \centering
   \footnotesize
   \begin{tabular} {| c | c | c | c | c |}
     \hline
-    & \multicolumn{2}{c|}{Proposed Method}&\multicolumn{2}{c|}{Baseline}\\
+    & \multicolumn{2}{c|}{Proposed Method}}&\multicolumn{2}{c|}{Baseline}\\
     \hline  
                 & ER    &  F-score  & ER    &  F-score  \\  
     \hline                                     
@@ -281,7 +285,7 @@ The error rate based on the event detection of the first stage is equal to 0.23 
     \hline
     Gun shot    & 0.18  & 91.0 \%        & 0.69  & 57.4 \%\\
     \hline
-    \textbf{Avarage} & \textbf{0.18} & \textbf{90.91 \%}& \textbf{0.53} & \textbf{72.7\%}\\
+    \textbf{Average} & \textbf{0.18} & \textbf{90.91 \%}& \textbf{0.53} & \textbf{72.7\%}\\
     \hline
                                       
   \end{tabular}
@@ -297,7 +301,7 @@ In our investigation we evaluated also a system applicable in a real word scenar
 
 \section{Conclusion and Outlook}
 \label{sec:conclusion}
- In this paper, a hierarchic multi-scaled neural network based approach for rare sound event detection is presented.  We extracted acoustic features from the audio signals, then the event detection is performed by an MLP-based stage and refined by a CNN-based decision stage, each with dedicated post processing procedures. To assess the performance of the algorithm we conducted experiments on the development dataset from the DCASE 2017 challenge setup. According to the challenge specifications, the performance of the system are evaluated in terms of event-based error rate calculated using onset-only condition with a collar of 500 ms on the validation subset, achieving an error rate equal to 0.23 with respect to an error rate equal to 0.53 of the baseline system. Future work will comprise the exploitation of event dedicated acoustic features, to better focus on the distinctive tracts given by the heterogeneous nature of the events. A deeper focus will be given also to the temporal evolution of the signal by means of recurrent structure, such as Long Short Term Memory (LSTM) Neural Networks \cite{hochreiter1997long}.
+ In this paper, a hierarchic multi-scaled neural network based approach for rare sound event detection is presented.  We extracted acoustic features from the audio signals, then the event detection is performed by an MLP-based stage and refined by a CNN-based decision stage, each with dedicated post processing procedures. To assess the performance of the algorithm we conducted experiments on the development dataset from the DCASE 2017 setup. According to the challenge specifications, the performance of the system are evaluated in terms of event-based error rate calculated using onset-only condition with a collar of 500 ms on the validation subset, achieving an error rate equal to 0.23 with respect to an error rate equal to 0.53 of the baseline system. Future work will comprise the exploitation of event dedicated acoustic features, to better focus on the distinctive tracts given by the heterogeneous nature of the events. A deeper focus will be given also to the temporal evolution of the signal by means of recurrent structure, such as Long Short Term Memory (LSTM) Neural Networks \cite{hochreiter1997long}.
 
 
 % -------------------------------------------------------------------------
