@@ -80,6 +80,8 @@ The proposed system is a hierarchical algorithm composed of four main stages: th
 \end{figure}
 %TODO sistemare caption che nnon mi piace
 
+\vspace{0.1cm}
+
 \subsection{Feature Extraction}
 The feature extraction stage operates on mono audio signals sampled at 44.1 kHz. For our purpose, we exploit \textit{LogMel} as feature set, following results obtained for the baseline system of the DCASE2017 challenge \cite{DCASE2017challenge}. \textit{LogMel} coefficients are obtained by filtering the magnitude spectrum with a filter-bank composed of 40 filters evenly spaced in the mel frequency scale and then computing the logarithm of the energy of each band. The used frame size is equal to 40 ms and the frame step is equal to 20 ms. 
 The range of feature values is then normalized according to the mean and the standard deviation computed on the training sets of the neural networks.
@@ -189,7 +191,14 @@ number of explored parameters sets depends on the wideness of the search space. 
 
 %TODO: add table with random search parameters and distributions + gridsearch ranges
 Because of the fast decay of  sound, we the noticed that the audio segments containing this event were in small number with respect to the other samples. For this reason we trained the MLP-based event detector obtained from the random seach with an extended dataset, including 500 newly generated mixtures containing the ``gun shot'' sound event.
-At the end of the validation stage of the system the neural network were trained including all the mixtures in the development dataset furnished with the DCASE 2017 challenge package and the aforementioned 500 newly generated containing the ``gun shot'' sound event for a total of 3487 audio sequences.
+At the end of the validation stage of the system the neural network were trained including all the mixtures in the development dataset furnished with the DCASE 2017 challenge package and the aforementioned 500 newly generated containing the ``gun shot'' sound event for a total of 3487 audio sequences. Figure \ref{fig:MLP-train} shows the flow chart of the complete procedure for the MLP-based event detection stage configuration.
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\columnwidth]{Images/training_first_stage.pdf}
+	\caption{Set-up procedure of the MLP-based event detection stage.}
+	\label{fig:MLP-train}
+\end{figure}
 
 \subsection{Multiscaled Refinement Decision Stage}
 
@@ -200,7 +209,14 @@ At the end of the validation stage of the system the neural network were trained
 %Abbiamo effetuato una valutazione della cnn subase evento con la fmeasure.
 %Finally, sul validati
 
-To compose the dataset for training and evaluation of the CNN we proceeded as follows: the samples of the event class were selected between the audio sections labelled as ``baby cry'', ``glass break'' and ``gun shot'' from the mixtures of the DCASE 2017 development dataset, in addition with the isolated events source signals. To obtain the background samples, we processed the sequences containing only background furnished with the DCASE 2017 development dataset with the first stage of the our algorithm. Thus, the frames detected as event in this case represent the ``false positive'' or ``insertions'' of the first stage. We used those frames as background samples in the CNN training phase to improve its refinement in the event detection process. 
+To compose the dataset for training and evaluation of the CNN we proceeded as follows: the samples of the event class were selected between the audio sections labelled as ``baby cry'', ``glass break'' and ``gun shot'' from the mixtures of the DCASE 2017 development dataset, in addition with the isolated events source signals. To obtain the background samples, we processed the sequences containing only background furnished with the DCASE 2017 development dataset with the first stage of the our algorithm. Thus, the frames detected as event in this case represent the ``false positive'' or ``insertions'' of the first stage. We used those frames as background samples in the CNN training phase to improve its refinement in the event detection process. Figure \ref{fig:CNN-train} shows the dataset composition for the training of the CNN-based event detector.
+
+\begin{figure}[b]
+	\centering
+	\includegraphics[width=\columnwidth]{Images/training_second_stage.pdf}
+	\caption{Training procedure of the CNN-based event detector.}
+	\label{fig:CNN-train}
+\end{figure}
 
 To design the best CNN model for our purposes, we generated a shuffle stratified validation split from the dataset composed as described above. We left out the 10\% of the samples as validation set for the CNN model and we selected the layout parameters of the neural network based on the F-measure score obtained on this data sub-set. The best performing model was composed as follows: three convolutional kernel layers respectively with $[16, 8, 8]$ filters each of these of size equal to $3\times3$. Each convolutional layer was followed by a max pooling layer with kernels of size $2\times2$. A dense layer composed of 64 neurons with $tanh$ activation function is applyed before the network output layer. The model was trained for 40 epochs on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$.
 
@@ -217,23 +233,26 @@ It is necessary to notice that in this challenge task the event target class (no
 \label{sec:results}
 The error rate based on the event detection of the first stage is equal to 0.23 and its respective F-measure is 88.0\%. 
 After the CNN-based refinement stage, the final overall error rate and F-measure are respectively equal to 0.18 and 90.9\%. 
-The post processing parameter used to select the MLP network with the lower ER and the value used in the final evaluation phase are reported in table \ref{tbl:post-proc-params}.
+The post processing parameters used to select the MLP network with the lower ER and the value used in the final evaluation phase are the following:
+$\theta=0.20$, $w=70$, $k=11$. The parameters used for the different submitted systems for the task 2 of DCASE 2017 challenge are reported in table \ref{tbl:submitted-params}.
 
 \begin{table}[t]
-  \caption{Post processing parameters. ER stays for only-onset error rate}
-  \label{tbl:post-proc-params}
+  \caption{Post processing parameters for submitted systems. Only the threshold is varied, $w = 70$ and $k=11$.}
+  \label{tbl:submitted-params}
   \centering
   \footnotesize
-  \begin{tabular} {| c | c | c |}
+  \begin{tabular} {| c | c |}
     \hline
-    Parameter     & MLP Optimal ER &  Evaluation\\  
+    Parameter     & Submission label\\  
     \hline
     \hline                                     
-    Threshold  & 0.25 & 0.20\\
+    $\theta=0.18$ & Vesperini\_UNIVPM\_task2\_1 \\
     \hline                                     
-    Windows length & 70 & 70\\
+    $\theta=0.198$ & Vesperini\_UNIVPM\_task2\_2 \\
     \hline
-    Median Filter & 11 & 11\\
+    $\theta=0.20$ & Vesperini\_UNIVPM\_task2\_3 \\
+    \hline   
+    $\theta=0.22$ & Vesperini\_UNIVPM\_task2\_4 \\
     \hline                                       
   \end{tabular}
 \end{table}
@@ -262,7 +281,7 @@ The post processing parameter used to select the MLP network with the lower ER a
 %\end{table}
 
  \begin{table}[t] 
- 	\caption{Final Scores}\label{tbl:finalScore} 
+ 	\caption{Final Scores with $\theta=0.20$, $w=70$, $k=11$.  ER stays for only-onset error rate.}\label{tbl:finalScore} 
  	\centering 
  	\footnotesize 
  	\begin{tabular} {| c | c | c | c | c |} 
