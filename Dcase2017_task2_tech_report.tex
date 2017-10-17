@@ -32,7 +32,7 @@
        Francesco Piazza$^{1}$
        }
        % fixed *.sty to allow names on multiple lines
- \address{$^1$ Politecnic University of Marche, Information Engineering  Dept., Ancona, Italy,\\ \{d.droghini, v.vesperini, d.ferretti\}@pm.univpm.it\\   
+ \address{$^1$ Universit\`{a} Politecnica delle Marche, Information Engineering  Dept., Ancona, Italy,\\ \{d.droghini, v.vesperini, d.ferretti\}@pm.univpm.it\\   
  		\{e.principi, l.gabrielli, s.squartini, f.piazza\}@univpm.it\\       
 }
   
@@ -47,7 +47,7 @@
 \begin{abstract}
 We propose a system for rare sound event detection using hierarchical and multi-scaled approach based on Multi Layer Perceptron (MLP) and Convolutional Neural Networks (CNN). 
 It is our contribution to the rare sound event detection task of the IEEE AASP Challenge on  Detection and Classification of Acoustic Scenes and Events (DCASE2017). The task consists on detection of event onset from artificially generated mixtures. Acoustic features are extracted from the acoustic signals, successively first event detection stage is performed by an MLP based neural network which proposes contiguous blocks of frames to the second stage. The CNN refines the event detection of the prior network, intrinsically operating on a multi-scaled resolution and discarding blocks that contain background wrongly classified by the MLP as event. Finally the effective onset time of the active event is obtained.
-The achieved overall error rate and F-measure on the development testset are respectively equal to 0.18 and 90.9\%.
+The achieved overall error rate and F-measure are respectively equal to 0.18 and 90.9\% on the development dataset and equal to 0.33 and 83.9\% on the evaluation dataset.	
 \end{abstract}
 
 \begin{keywords}
@@ -104,7 +104,7 @@ As network output signal we consider the output of the neuron corresponding to t
 CNN is a feed-forward neural network \cite{Yann-cnn-1998} usually composed of three types of layers: convolutional layers, pooling layers and layers of neurons. The convolutional layer performs the mathematical operation of convolution between a multi-dimensional input and a fixed size kernel. Successively, a non-linearity is applied element-wise. The kernels are generally small compared to the input, allowing CNNs to process large inputs with few learnable parameters. Successively, a pooling layer is usually applied, in order to reduce the feature map dimensions. Finally, at the top of the network, an MLP layer is applied.
 The aim of the CNN is to discriminate the event, selected from the previous network, from the background. The network is trained as a two-class classifier on non-overlapped audio chunk of logmel frames with resulting 2D input dimension of $40\times20$. In the case of audio task, CNN usually exploits the temporal evolution of the signal \cite{thomas2014analyzing} due of its nature. 
 The frame chunk size was selected equal to 20, which corresponds to 0.4 seconds of audio, reflecting the half of the minimum length of the occurring events.
-In the classification phase the audio event are evaluated based on frame chunk $40\times20$ with an overlapp of 95\% (1 frame shift). This leads to an analysis of the audio event at different time and frequency resolution with respect to previous stage. 
+In the classification phase the audio event are evaluated based on frame chunk $40\times20$ with an overlap of 95\% (1 frame shift). This leads to an analysis of the audio event at different time and frequency resolution with respect to previous stage. 
 
 \subsubsection{Post Processig }
 %per ogni seq analizzo tutti gli eventi. Scarto quelli classificati con bck . Prendo il primo evento classificato come non bck perche lo scopo è beccare l onseth
@@ -186,11 +186,12 @@ The performance of the first event detection stage has been assessed by explorin
 %   \end{tabular}
 % \end{table}
 
-Table \ref{tbl:hyper-params-mlp} shows the parameters explored in the random search, as well as the prior distribution and ranges. The
-number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. The neural networks were trained on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$. The maximum number of epochs was set to 300. A successive grid search was performed for each network configuration evaluated in the random seach, in order to find the post-processing parameters that yielded the minimum error rate. Investigated parameters in the grid search were: exponential window length $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table \ref{tbl:post-proc-params-mlp}. The model with resulting minimum error rate was composed as follows: the input layer accepted 120 values for each frame index, corresponding to a context size $C=3$, the hidden layers were two dense layers respectively of size $[631,419]$, to whom the $ReLU$ activation function is applied and finally the output layer made of two neurons with the softmax function.
+Table \ref{tbl:hyper-params-mlp} shows the parameters explored in the random search, as well as the prior distribution and ranges. 
+%%
+The number of explored parameters sets depends on the wideness of the search space. In this work, we explored 200 sets of layout parameters for the MLP event detection. The neural networks were trained for 300 epochs on the categorical cross entropy loss function with the Adadelta gradient descent algorithm. The learning rate $lr=1.0$, as the parameters $\rho=0.95$, $\epsilon=10^{-6}$ were left to their default values as suggested in Keras documentation.
+A successive grid search was performed for each network configuration evaluated in the random seach, in order to find the post-processing parameters that yielded the minimum error rate. Investigated parameters in the grid search were: exponential window length $w$, median filter kernel $k$ and threshold $\theta$. The respective ranges are reported in Table \ref{tbl:post-proc-params-mlp}. The model with resulting minimum error rate was composed as follows: the input layer accepted 120 values for each frame index, corresponding to a context size $C=3$, the hidden layers were two dense layers respectively of size $[631,419]$, to whom the $ReLU$ activation function is applied and finally the output layer is made of two neurons with the softmax function.
 
-%TODO: add table with random search parameters and distributions + gridsearch ranges
-Because of the fast decay of  sound, we the noticed that the audio segments containing this event were in small number with respect to the other samples. For this reason we trained the MLP-based event detector obtained from the random seach with an extended dataset, including 500 newly generated mixtures containing the ``gun shot'' sound event.
+Because of the fast decay of the ``gun shot'' sound, we noticed that there was a small amount of audio frames containing this event with respect to the other sound event classes. For this reason we trained the MLP-based event detector obtained from the random seach with an extended dataset, including 500 newly generated mixtures containing the ``gun shot'' sound event.
 At the end of the validation stage of the system the neural network were trained including all the mixtures in the development dataset furnished with the DCASE 2017 challenge package and the aforementioned 500 newly generated containing the ``gun shot'' sound event for a total of 3487 audio sequences. Figure \ref{fig:MLP-train} shows the flow chart of the complete procedure for the MLP-based event detection stage configuration.
 
 \begin{figure}[t]
@@ -218,7 +219,7 @@ To compose the dataset for training and evaluation of the CNN we proceeded as fo
 	\label{fig:CNN-train}
 \end{figure}
 
-To design the best CNN model for our purposes, we generated a shuffle stratified validation split from the dataset composed as described above. We left out the 10\% of the samples as validation set for the CNN model and we selected the layout parameters of the neural network based on the F-measure score obtained on this data sub-set. The best performing model was composed as follows: three convolutional kernel layers respectively with $[16, 8, 8]$ filters each of these of size equal to $3\times3$. Each convolutional layer was followed by a max pooling layer with kernels of size $2\times2$. A dense layer composed of 64 neurons with $tanh$ activation function is applyed before the network output layer. The model was trained for 40 epochs on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with learning rate equal to 1.0, $\rho=0.95$, $\epsilon=10^{-6}$.
+To design the best CNN model for our purposes, we generated a shuffle stratified validation split from the dataset composed as described above. We left out the 10\% of the samples as validation set for the CNN model and we selected the layout parameters of the neural network based on the F-measure score obtained on this data sub-set. The best performing model was composed as follows: three convolutional kernel layers respectively with $[16, 8, 8]$ filters each of these of size equal to $3\times3$. Each convolutional layer was followed by a max pooling layer with kernels of size $2\times2$. A dense layer composed of 64 neurons with $tanh$ activation function is applyed before the network output layer. The model was trained for 40 epochs on the categorical cross entropy loss function with the Adadelta gradient descent algorithm with $lr=1.0$, $\rho=0.95$, $\epsilon=10^{-6}$ as for the MLPs.
 
 
 \subsection{Evaluation Phase}
@@ -231,32 +232,11 @@ It is necessary to notice that in this challenge task the event target class (no
 
 \section{Results}
 \label{sec:results}
-The error rate based on the event detection of the first stage is equal to 0.23 and its respective F-measure is 88.0\%. 
+\subsection{Results on Development dataset}
+The error rate based on the event detection of the first stage on the development dataset is equal to 0.23 and its respective F-measure is 88.0\%. 
 After the CNN-based refinement stage, the final overall error rate and F-measure are respectively equal to 0.18 and 90.9\%. 
 The post processing parameters used to select the MLP network with the lower ER and the value used in the final evaluation phase are the following:
-$\theta=0.20$, $w=70$, $k=11$. The parameters used for the different submitted systems for the task 2 of DCASE 2017 challenge are reported in table \ref{tbl:submitted-params}.
-
-\begin{table}[t]
-  \caption{Post processing parameters for submitted systems. Only the threshold is varied, $w = 70$ and $k=11$.}
-  \label{tbl:submitted-params}
-  \centering
-  \footnotesize
-  \begin{tabular} {| c | c |}
-    \hline
-    Parameter     & Submission label\\  
-    \hline
-    \hline                                     
-    $\theta=0.18$ & Vesperini\_UNIVPM\_task2\_1 \\
-    \hline                                     
-    $\theta=0.198$ & Vesperini\_UNIVPM\_task2\_2 \\
-    \hline
-    $\theta=0.20$ & Vesperini\_UNIVPM\_task2\_3 \\
-    \hline   
-    $\theta=0.22$ & Vesperini\_UNIVPM\_task2\_4 \\
-    \hline                                       
-  \end{tabular}
-\end{table}
-
+$\theta=0.20$, $w=70$, $k=11$. 
 
 % \begin{table}[t]
 %  \caption{Final Scores. ER stays for only-onset error rate}
@@ -281,7 +261,7 @@ $\theta=0.20$, $w=70$, $k=11$. The parameters used for the different submitted s
 %\end{table}
 
  \begin{table}[t] 
- 	\caption{Final Scores with $\theta=0.20$, $w=70$, $k=11$.  ER stays for only-onset error rate.}\label{tbl:finalScore} 
+ 	\caption{Final Scores on Development dataset with $\theta=0.20$, $w=70$, $k=11$.  ER stays for only-onset error rate.}\label{tbl:finalScore} 
  	\centering 
  	\footnotesize 
  	\begin{tabular} {| c | c | c | c | c |} 
@@ -306,6 +286,31 @@ $\theta=0.20$, $w=70$, $k=11$. The parameters used for the different submitted s
 
 With respect to the DCASE 2017 baseline system the improvement in terms of error rate reduction is equal to 0.35. In Table \ref{tbl:finalScore} are reported the scores for the two stages of the proposed system and the baseline.
 
+\subsection{Results on Evaluation dataset}
+The parameters used for the different submitted systems for the task 2 of DCASE 2017 challenge are reported in table \ref{tbl:submitted-params}.
+
+\begin{table}[t]
+	\caption{Post processing parameters for submitted systems. Only the threshold is varied, $w = 70$ and $k=11$.}
+	\label{tbl:submitted-params}
+	\centering
+	\footnotesize
+	\begin{tabular} {| c | c |}
+		\hline
+		Parameter     & Submission label\\  
+		\hline
+		\hline                                     
+		$\theta=0.18$ & Vesperini\_UNIVPM\_task2\_1 \\
+		\hline                                     
+		$\theta=0.198$ & Vesperini\_UNIVPM\_task2\_2 \\
+		\hline
+		$\theta=0.20$ & Vesperini\_UNIVPM\_task2\_3 \\
+		\hline   
+		$\theta=0.22$ & Vesperini\_UNIVPM\_task2\_4 \\
+		\hline                                       
+	\end{tabular}
+\end{table}
+
+
 \subsection{Real Scenario application}
 %Descrizione scenario reale: trainig cnn su 4 classi
 %risultato finale 0.23
@@ -314,7 +319,10 @@ In our investigation we evaluated also a system applicable in a real word scenar
 
 \section{Conclusion and Outlook}
 \label{sec:conclusion}
- In this paper, a hierarchic multi-scaled neural network based approach for rare sound event detection is presented.  We extracted acoustic features from the audio signals, then the event detection is performed by an MLP-based stage and refined by a CNN-based decision stage, each with dedicated post processing procedures. To assess the performance of the algorithm we conducted experiments on the development dataset from the DCASE 2017 setup. According to the challenge specifications, the performance of the system are evaluated in terms of event-based error rate calculated using onset-only condition with a collar of 500 ms on the validation subset, achieving an error rate equal to 0.23 with respect to an error rate equal to 0.53 of the baseline system. Future work will comprise the exploitation of event dedicated acoustic features, to better focus on the distinctive tracts given by the heterogeneous nature of the events. A deeper focus will be given also to the temporal evolution of the signal by means of recurrent structure, such as Long Short Term Memory (LSTM) Neural Networks \cite{hochreiter1997long}.
+%TODO add results on evaluation dataset
+ In this paper, a hierarchic multi-scaled neural network based approach for rare sound event detection is presented.  We extracted acoustic features from the audio signals, then the event detection is performed by an MLP-based stage and refined by a CNN-based decision stage, each with dedicated post processing procedures. To assess the performance of the algorithm we conducted experiments on the development dataset from the DCASE 2017 setup. According to the challenge specifications, the performance of the system are evaluated in terms of event-based error rate calculated using onset-only condition with a collar of 500 ms on the validation subset, achieving an error rate on the Development dataset equal to  0.23 with respect to an error rate equal to 0.53 of the baseline system. \textbf{ndFab: Add results on evaluation dataset.}
+ 
+Future work will comprise the exploitation of event dedicated acoustic features, to better focus on the distinctive tracts given by the heterogeneous nature of the events. A deeper focus will be given also to the temporal evolution of the signal by means of recurrent structure, such as Long Short Term Memory (LSTM) Neural Networks \cite{hochreiter1997long}.
 %
 
 % -------------------------------------------------------------------------
