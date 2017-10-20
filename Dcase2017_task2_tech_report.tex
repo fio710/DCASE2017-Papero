@@ -287,7 +287,7 @@ $\theta=0.20$, $M=70$, $k=11$.
  		\hline 
  		Gun shot    & 0.18  & 91.0 \%        & 0.69  & 57.4 \%\\ 
  		\hline 
- 		\textbf{Avarage} & \textbf{0.18} & \textbf{90.91 \%}& \textbf{0.53} & \textbf{72.7\%}\\ 
+ 		\textbf{Avarage} & \textbf{0.18} & \textbf{90.91\%}& \textbf{0.53} & \textbf{72.7\%}\\ 
  		\hline 
  		
  	\end{tabular} 
@@ -299,7 +299,7 @@ With respect to the DCASE 2017 baseline system the improvement in terms of error
 
 \subsection{Results on Evaluation dataset}
 For the evaluation phase the system has been submitted with 4 configurations in which the threshold has been varied. The value of the threshold and the corresponding results for each of the four submitted configurations are reported in Table \ref{tbl:submitted-params}. The first column represent the submission label that can be found on the result page of the DCASE2017 (task 2) web site \cite{dcase2017webResultsTask2}.
-The best results was obtained with the lower threshold for the MLP stage. As explained in section \ref{sec:Evaluation_Phase} in this conditions the first stage generates more false positive with the corresponding increase of the true positive, leaving to the CNN refinement stage the task of eliminating false alarms.
+The best results were obtained with the lower threshold for the MLP post-processing procedure. As explained in section \ref{sec:Evaluation_Phase}, in this conditions the first stage reduces the false negatives or deletions leaving to the CNN refinement stage the task of eliminating false alarms.
 
 \begin{table}[t]
 	\caption{Post processing parameters for submitted systems. Only the threshold is varied, $M = 70$ and $k=11$.}
@@ -314,13 +314,13 @@ The best results was obtained with the lower threshold for the MLP stage. As exp
 		\hline
 
 %		Vesperini\_UNIVPM\_task2\                          
-		1 &$0.18$  &0.3267&83.9 &0.20&89.8 \\
+		1 &$0.18$  &0.3267&83.9\% &0.20&89.8\% \\
 		\hline                                     
-		2 &$0.198$ &0.3440&	82.8&0.18&90.8  \\
+		2 &$0.198$ &0.3440&	82.8\%&0.18&90.8\%  \\
 		\hline
-		3 &$0.20$  &0.3267 &	83.2 &	0.18&	90.8\\
+		3 &$0.20$  &0.3267 &	83.2\% &	0.18&	90.8\%\\
 		\hline   
-		4 &$0.22$ &0.3267	&83.2 &	0.19&	90.4\\
+		4 &$0.22$ &0.3267	&83.2\% &	0.19&	90.4\%\\
 		\hline                                       
 	\end{tabular}
 \end{table}
